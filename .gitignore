@@ -1,0 +1,35 @@
+# Ambientes e cache Python
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+.coverage
+htmlcov/
+# Credenciais e configurações locais
+.env
+.env.*
+!.env.example
+.aws/
+.codex/
+.agents/
+*.pem
+*.key
+credentials*.json
+secrets*.json
+# Arquivos temporários e ferramentas
+*.log
+*.tmp
+*.swp
+*~
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+node_modules/
