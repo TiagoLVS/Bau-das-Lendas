@@ -737,3 +737,6 @@ body:not(.dentro) #rodape { color: #a69e90; }
 @media (prefers-reduced-motion: reduce) {
   .j-vela, .j-vela2, .j-balanca, .j-balanca2, .j-pendulo, .j-paira, .j-luzes, .j-passo, .j-feixe, .j-vaca { animation: none; }
 }
+
+/* Oculta o texto de contagem da entrada */
+#relogio-meianoite { display: none !important; }
