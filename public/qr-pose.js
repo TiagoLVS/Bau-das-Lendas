@@ -21,7 +21,18 @@ const dot = (a, b) => a.reduce((s, n, i) => s + n * b[i], 0);
 const cross = (a, b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
 
 export function estimateQrPose(corners, width, height, fov = 60) {
-  if (corners.length !== 4 || width <= 0 || height <= 0 || corners.some(p => !Number.isFinite(p.x) || !Number.isFinite(p.y))) return null;
+  if (!Array.isArray(corners) || corners.length !== 4 ||
+      !Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0 ||
+      !Number.isFinite(fov) || fov <= 0 || fov >= 180 ||
+      corners.some(p => !p || !Number.isFinite(p.x) || !Number.isFinite(p.y) ||
+        p.x < 0 || p.y < 0 || p.x > width || p.y > height)) return null;
+  // Os cantos precisam formar um quadrilátero convexo, sem cruzamento.
+  const turns = corners.map((p,i) => {
+    const b = corners[(i+1)%4], c = corners[(i+2)%4];
+    return (b.x-p.x)*(c.y-b.y) - (b.y-p.y)*(c.x-b.x);
+  });
+  if (turns.some(n => Math.abs(n) < 1e-8) ||
+      !turns.every(n => Math.sign(n) === Math.sign(turns[0]))) return null;
   const focal = height / (2 * Math.tan(fov * Math.PI / 360));
   const plane = [[-.5,.5],[.5,.5],[.5,-.5],[-.5,-.5]];
   const rows = [];

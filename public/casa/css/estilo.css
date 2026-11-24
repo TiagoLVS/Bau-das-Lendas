@@ -740,3 +740,82 @@ body:not(.dentro) #rodape { color: #a69e90; }
 
 /* Oculta o texto de contagem da entrada */
 #relogio-meianoite { display: none !important; }
+/* Navegação externa compacta; controles internos da casa preservados. */
+#topo .perfil-acesso { display:inline-flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; font:11px var(--mono); color:inherit; text-decoration:none; }
+#topo nav { min-width:0; overflow-x:auto; }
+#topo nav a { flex:none; min-height:44px; display:inline-flex; align-items:center; }
+
+/* Etapa 10: navegação e texto de entrada acessíveis sem alterar a cena 3D. */
+#topo { padding-top:env(safe-area-inset-top); }
+#marca, #topo nav a, #btn-som, .j-link, .link-voltar { min-height:44px; display:inline-flex; align-items:center; }
+#topo nav a { min-width:44px; }
+#rodape { bottom:max(20px,env(safe-area-inset-bottom)); }
+#dossie { scroll-padding-top:max(16px,env(safe-area-inset-top)); }
+#btn-fechar { position:sticky; top:max(12px,env(safe-area-inset-top)); z-index:2; background:var(--breu); }
+@media (max-width:900px), (max-height:600px) {
+  #topo { height:auto; min-height:108px; padding: max(8px,env(safe-area-inset-top)) var(--gutter) 8px; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; }
+  #topo nav { grid-column:1/-1; grid-row:2; max-width:100%; width:100%; gap:16px; }
+  #topo .perfil-acesso { grid-column:2; grid-row:1; }
+  #limiar-texto { top:calc(116px + env(safe-area-inset-top)); bottom:calc(82px + env(safe-area-inset-bottom)); transform:none; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; }
+  #limiar-texto .sobretitulo { margin-top:0; }
+  #ficha { max-height:calc(100dvh - 204px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow-y:auto; overscroll-behavior:contain; }
+  #ficha-nome { font-size:clamp(32px,5vw,46px); }
+  #ficha .acoes { position:sticky; bottom:0; background:var(--breu); padding-top:8px; margin-top:16px; }
+}
+@media (max-height:600px) {
+  #planta { max-height:calc(100dvh - 200px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; }
+}
+/* A luz decorativa acompanha a largura disponível e não expande o dossiê. */
+.dossie-luz { width:min(1000px,calc(100vw + 200px)); }
+@media (max-width:900px), (max-height:600px) {
+  #btn-fechar { position:fixed; top:max(12px,env(safe-area-inset-top)); right:max(16px,env(safe-area-inset-right)); }
+}
+
+/* ---------- REVISÃO VISUAL: LUAR E BRUMA ----------
+   Camadas fixas fora de #palco: não participam da composição 3D (evita o defeito
+   de ordenação do WebKit). Apenas opacity muda, na troca jardim → corredor. */
+#luar { position: fixed; inset: 0; pointer-events: none; z-index: 4;
+  background:
+    radial-gradient(ellipse 55% 60% at 88% 6%, rgba(var(--luz-lua, 178, 196, 214), .2), transparent 70%),
+    radial-gradient(ellipse 70% 40% at 18% 100%, rgba(10, 18, 16, .55), transparent 75%);
+  transition: opacity 1.6s ease; }
+body.lua-cheia #luar { --luz-lua: 205, 218, 240; }
+body.dentro #luar { opacity: 0; }
+#bruma { position: fixed; left: 0; right: 0; bottom: 0; height: 46vh; pointer-events: none; z-index: 4; overflow: hidden;
+  opacity: .85; transition: opacity 1.6s ease; }
+#bruma i { position: absolute; left: 0; bottom: -8vh; width: 200%; height: 100%;
+  background:
+    radial-gradient(ellipse 18% 38% at 12% 70%, rgba(150, 162, 158, .2), transparent 70%),
+    radial-gradient(ellipse 22% 30% at 37% 82%, rgba(150, 162, 158, .16), transparent 70%),
+    radial-gradient(ellipse 16% 34% at 62% 74%, rgba(150, 162, 158, .2), transparent 70%),
+    radial-gradient(ellipse 24% 28% at 87% 84%, rgba(150, 162, 158, .16), transparent 70%);
+}
+#bruma i + i { bottom: -16vh; left: -38%; opacity: .7; }
+body.dentro #bruma { opacity: .35; }
+/* Bruma estática: a deriva animada custava ~35% dos quadros no WebKit Linux
+   (medido em tests/artifacts/revisao-visual); a profundidade vem dos gradientes. */
+
+/* Retrato: o texto ocupa toda a largura; o véu passa a ser vertical para que o
+   título e os links não disputem com o traço da casa. */
+@media (orientation: portrait) and (max-width: 760px) {
+  #limiar::before { background: linear-gradient(180deg, rgba(11,10,9,.9) 0, rgba(11,10,9,.84) 58%, rgba(11,10,9,.35) 74%, rgba(11,10,9,0) 86%); }
+}
+
+/* Paisagem baixa (ex.: 844×390, 568×320): o bloco centrado transbordava e as
+   ações ficavam sob o rodapé, inalcançáveis. Agora ele cabe entre topo e rodapé
+   e rola quando necessário. */
+@media (orientation: landscape) and (max-height: 500px) {
+  #limiar::before { background: linear-gradient(90deg, rgba(11,10,9,.96) 0, rgba(11,10,9,.93) 56%, rgba(11,10,9,.4) 70%, rgba(11,10,9,0) 82%); }
+  #limiar .sobretitulo { display: none; }
+  #limiar-texto { top: 92px; transform: none; width: min(520px, 62vw); max-height: calc(100dvh - 92px - 72px);
+    overflow-y: auto; overscroll-behavior: contain; padding-bottom: 8px; }
+  #limiar h1 { margin-top: 10px; font-size: clamp(26px, 4.4vw, 40px); }
+  #limiar .j-legenda { margin-top: 10px; }
+}
+@media (orientation: landscape) and (max-height: 360px) {
+  #limiar-texto { max-height: calc(100dvh - 92px - 96px); }
+}
+
+/* Otimização: enquanto o corredor está oculto (visitante no jardim), suas animações
+   decorativas ficam pausadas; ao reaparecer, retomam de onde estavam. */
+.animacoes-pausadas, .animacoes-pausadas * { animation-play-state: paused !important; }

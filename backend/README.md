@@ -1,3 +1,37 @@
+# Recompensas — Etapa 04
+
+Escopo educativo vigente: nenhuma pergunta ou avaliação condiciona leitura, coleção ou recompensa. Não criar endpoints, tabelas ou regras de quiz. A antiga Etapa 12/T19 foi cancelada; a aprendizagem ocorre pela leitura e exploração, conforme a [decisão definitiva](../docs/DECISAO-ESCOPO-SEM-QUIZZES.md). O backend e as regras diárias existentes permanecem preservados.
+
+Consulte [ETAPA-04-RECOMPENSAS-HISTORICO](../docs/ETAPA-04-RECOMPENSAS-HISTORICO.md).
+Uma recompensa por usuário/dia em America/Sao_Paulo, controlada no servidor;
+renovação à meia-noite local. A migração 0002 cria daily_rewards e preserva
+integralmente draw_requests/user_cards. Antes de migrar banco real, revisar e
+obter autorização; apenas bau_test foi migrado nesta etapa.
+
+# Segurança — Etapa 03
+
+A política atual está em [ETAPA-03-AUTENTICACAO-SEGURANCA](../docs/ETAPA-03-AUTENTICACAO-SEGURANCA.md).
+Limites por processo: login 20/60 s, cadastro 10/60 s, sorteio 120/60 s por usuário;
+8 logins inválidos por cliente suspendem novas tentativas até a janela de 300 s expirar.
+Configuração `RATE_*` em `.env.example`; respostas 429 incluem Retry-After.
+Essas cotas técnicas não substituem a regra diária da Etapa 04. A solução em memória exige um único worker para esses limites
+serem globais; reinício os limpa. Não habilitar vários workers sem armazenamento compartilhado.
+
+Os comandos oficiais usam `--no-proxy-headers`: IPs enviados em X-Forwarded-For não são
+confiáveis. Atrás de proxy, todos os clientes podem compartilhar a cota do peer até uma
+configuração explícita de proxy confiável e sanitização dos headers. Não usar confiança `*`.
+Cookies Secure/HTTPS/PostgreSQL continuam obrigatórios em produção. Cabeçalhos de segurança
+são aplicados à API; o servidor que hospedar os arquivos estáticos deve configurar os seus.
+
+# Execução atual — Etapa 02
+
+Consulte [ETAPA-02-BACKEND-POSTGRESQL](../docs/ETAPA-02-BACKEND-POSTGRESQL.md)
+para a validação atual, ambiente Linux, banco isolado, execução e encerramento.
+A API completa é `app.main:app`; `main:app` agora apenas a reexporta.
+Use `python backend/run.py --env-file backend/.env api` da raiz com o Python do venv.
+A seção abaixo preserva instruções e evidências históricas; `local_postgres.py`
+é um auxiliar legado de Windows, não o inicializador recomendado no Kubuntu.
+
 # Backend do Baú das Lendas
 
 > Cartas e demonstração (05/11/2026): [integração atual e comandos seguros da conta de teste](../docs/CARTAS-INTEGRADAS.md). São oito cartas oficiais e Saci em exposição, conforme decisão da usuária; o catálogo continua com 60 lendas.
@@ -56,7 +90,7 @@ Senha com Argon2id; JWT com expiração (120 minutos por padrão), issuer e audi
 
 Todos os POSTs exigem `Origin` na lista `ALLOWED_ORIGINS` e `X-Bau-Request: 1`, inclusive login/cadastro, para proteção CSRF. CORS aceita origens explícitas e credenciais. O cliente `public/api.js`, compartilhado com React e RA estática, envia esses headers e `credentials: include`; falhas e timeouts não geram cartas locais.
 
-Em produção, sirva `dist` por HTTPS e configure um reverse proxy que encaminhe **`/api/*` ao FastAPI**, preservando caminho e headers, na mesma origem do site. Defina `COOKIE_SECURE=true`, `JWT_SECRET` aleatório e `ALLOWED_ORIGINS=["https://seu-dominio"]`. Para túnel HTTPS de desenvolvimento, inclua sua origem exata. Não publique `.env`. A RA usa URLs relativas `/api` e não usa `import.meta.env`. Esta estratégia pressupõe site e API na mesma origem pública, não domínios independentes.
+Em produção, sirva `dist` por HTTPS e configure um reverse proxy que encaminhe **`/api/*` ao FastAPI**, preservando caminho e headers, na mesma origem do site. Defina `APP_ENV=production`, `COOKIE_SECURE=true`, `JWT_SECRET` aleatório e `ALLOWED_ORIGINS=["https://seu-dominio"]`. Para túnel HTTPS de desenvolvimento, inclua sua origem exata. Não publique `.env`. A RA usa URLs relativas `/api` e não usa `import.meta.env`. Esta estratégia pressupõe site e API na mesma origem pública, não domínios independentes.
 
 O Swagger não envia automaticamente `X-Bau-Request`; para POSTs use o cliente do site ou HTTPX com os dois headers exigidos. Confirmação de e-mail, recuperação de senha e limitação operacional de tentativas de login não estão incluídas. Configure infraestrutura, backups e limites de tráfego antes da publicação pública.
 
@@ -71,14 +105,27 @@ O Swagger não envia automaticamente `X-Bau-Request`; para POSTs use o cliente d
 | `GET /api/legends` | Catálogo público com 60 lendas completas |
 | `GET /api/album` | Autenticado; posições ordenadas, descoberta e progresso |
 | `GET /api/album/progress` | Autenticado; `total`, `obtained`, `remaining`, `complete` |
-| `POST /api/draws` | Autenticado; header `Idempotency-Key`; corpo vazio ou `{}` |
+| `POST /api/draws` | Alias diário de `/api/rewards/open`, sem bypass |
+| `POST /api/rewards/open` | Autenticado; Idempotency-Key obrigatório; corpo vazio ou `{}` |
+| `GET /api/rewards/status` | Disponibilidade, data local, hora do servidor, próxima renovação e progresso |
+| `GET /api/rewards/history` | Histórico individual; limit 1–50 (padrão 10), offset 0–100000 |
 | `GET /api/health` | Consulta ao banco, 503 em falha |
 
 Álbum: cada posição bloqueada contém apenas `numero`, `unlocked=false`, `legend=null` e `collected_at=null`. Descobertas incluem carta e data. Histórias permanecem públicas no catálogo curatorial. As respostas da API não são armazenadas em cache.
 
-Sorteio: `{id, legend, progress, remaining, complete}`. O servidor bloqueia a linha do usuário com `SELECT FOR UPDATE`, verifica a chave, consulta somente lendas restantes e escolhe com `secrets.randbelow(N)`. Carta e sorteio são persistidos na mesma transação. Constraints únicas protegem usuário/carta e usuário/chave. Não há limite diário, XP ou raridade. Campos extras no corpo são rejeitados.
+Sorteio atual: `{id, legend, progress, remaining, complete, is_new, is_duplicate,
+reward_date, claimed_at, next_available_at, timezone}`. O servidor bloqueia a linha
+do usuário e captura a hora UTC após adquirir o lock. Verifica a chave antes da
+regra diária. Prioriza lendas restantes; em 60/60 sorteia entre as 60 e registra
+repetida sem inserir UserCard. Constraints protegem usuário/data, usuário/carta e
+usuário/chave. Nova tentativa no dia responde 409 com detail.code=DAILY_REWARD_USED;
+429 continua sendo exclusivamente limite técnico. Campos extras são rejeitados.
 
-Repetir uma chave devolve **o snapshot original inteiro**, mesmo após outros sorteios. Consulte `/album/progress` para o estado atual. Em 60/60, uma chave nova registra resultado idempotente com `legend=null`, `remaining=0`, `complete=true`. Falhas do banco retornam 503 sem detalhes internos. Se a resposta se perder após commit, repita a mesma chave.
+Repetir chave confirmada devolve o snapshot original inteiro, inclusive após a
+meia-noite, sem consumir outro dia. Snapshots legados podem ter contrato antigo,
+inclusive legend=null após coleção completa; não foram reescritos. Status e
+progresso atuais devem ser consultados por GET. Falha de banco retorna 503 sem
+detalhes internos. Resposta perdida após commit deve ser recuperada com a mesma chave.
 
 Na RA, somente **ABRIR BAÚ** faz POST. A entrada na página e reconhecimento do alvo não sorteiam. A chave pendente fica em sessionStorage por usuário/aba para recuperar falhas ou reload; não é coleção nem credencial. **ESCANEAR NOVAMENTE** encerra a abertura e a seguinte usa nova chave. As três faces e a animação recebem a carta do servidor. O Grimório consulta o álbum ao abrir e recuperar foco; cartas descobertas usam dados da API, e falhas bloqueiam a coleção com mensagem.
 

@@ -11,7 +11,21 @@
     "notaEncontro": "se invocar ou estiver no banheiro que alguem invocou ja era pra vc",
     "categoria": "",
     "imagem": "/casa/img/cartas/loira.jpg",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Brasil",
+      "codigoPais": "BR",
+      "regiao": "Guaratinguetá, Brasil",
+      "tradicao": "Lenda escolar",
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Em Guaratinguetá, a memória de Maria Augusta foi associada à Loira do Banheiro, assombração conhecida em escolas. Na versão do catálogo, depois de sua morte, o corpo voltou ao Brasil e permaneceu por um período na residência da família. Relatos de vultos, perfume e sons acompanharam o lugar, mais tarde transformado em escola. A narrativa relaciona uma pessoa histórica a histórias de aparições, sem comprovar acontecimentos sobrenaturais ou representar todas as versões da lenda.",
+      "contextoCultural": "Lenda escolar brasileira. A associação local de Maria Augusta com a Loira não torna essa versão a origem única de todas as variantes escolares.",
+      "curiosidades": [],
+      "revisao": {
+        "estado": "parcial",
+        "resumo": "adaptado_do_texto"
+      }
+    }
   },
   {
     "id": "a-maldicao-de-kayako-saeki",
@@ -25,7 +39,21 @@
     "notaEncontro": "fique longe da casa onde os espiritos vingativos estão",
     "categoria": "",
     "imagem": "/casa/img/cartas/kayako.jpg",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Japão",
+      "codigoPais": "JP",
+      "regiao": "Japão",
+      "tradicao": "Ficção cinematográfica",
+      "tipoNarrativa": "ficcao_cinematografica",
+      "resumoEducativo": "Kayako vive uma tragédia familiar quando Takeo encontra seu diário e acredita estar sendo traído. Depois de sua morte violenta, uma maldição fica ligada à casa e ameaça quem entra em contato com ela. Toshio também participa da história, com diferenças entre versões dos filmes. Trata-se de uma personagem de ficção cinematográfica japonesa: a narrativa utiliza a figura do espírito vingativo, mas não deve ser apresentada como registro de uma pessoa real ou de uma aparição comprovada.",
+      "contextoCultural": "Ficção cinematográfica japonesa ligada à franquia Ju-On/O Grito; diferenciar a personagem criada para o cinema das tradições de espíritos vingativos que a narrativa mobiliza.",
+      "curiosidades": [],
+      "revisao": {
+        "estado": "parcial",
+        "resumo": "adaptado_do_texto"
+      }
+    }
   },
   {
     "id": "kiyohime",
@@ -39,7 +67,23 @@
     "notaEncontro": "se vc frequentar templos",
     "categoria": "",
     "imagem": "/casa/img/cartas/kiyohime.jpg",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Japão",
+      "codigoPais": "JP",
+      "regiao": "Japão",
+      "tradicao": "Tradição do templo Dōjōji",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Kiyohime se apaixona pelo monge Anchin durante uma peregrinação. Ele promete voltar, mas tenta evitá-la. Ao descobrir a fuga, ela se transforma em uma grande serpente e o persegue. Anchin procura proteção no templo Dōjōji, escondendo-se sob um sino. A serpente envolve o sino e produz um calor que mata o monge. A versão apresentada é uma narrativa trágica ligada ao templo, preservada e reinterpretada por diferentes formas de contar histórias.",
+      "contextoCultural": "Narrativa associada ao templo Dōjōji. A relação entre lugar religioso e transmissão da história deve ser distinguida de comprovação dos acontecimentos narrados.",
+      "curiosidades": [
+        "O templo Dōjōji tem uma cerimônia que retoma a narrativa de Anchin e Kiyohime."
+      ],
+      "revisao": {
+        "estado": "parcial",
+        "resumo": "adaptado_do_texto"
+      }
+    }
   },
   {
     "id": "tamamo-no-mae",
@@ -53,7 +97,23 @@
     "notaEncontro": "evitar a pedra",
     "categoria": "",
     "imagem": "/casa/img/cartas/tamamo.jpg",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Japão",
+      "codigoPais": "JP",
+      "regiao": "Japão, região de Nasu",
+      "tradicao": "Lenda da raposa de nove caudas",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Tamamo-no-Mae conquista a confiança da corte pela beleza e inteligência. Quando o imperador adoece, ela passa a ser suspeita e é identificada como uma raposa sobrenatural de nove caudas disfarçada de mulher. Na versão do catálogo, guerreiros a perseguem e sua força permanece associada à Sesshō-seki, em Nasu. A pedra é um lugar cultural real, enquanto a transformação, a perseguição sobrenatural e seus poderes pertencem à narrativa lendária.",
+      "contextoCultural": "Lenda japonesa associada à corte e à região de Nasu. Literatura e paisagem cultural participam da transmissão da história da raposa e da pedra.",
+      "curiosidades": [
+        "O entorno da Sesshō-seki inclui a nascente da mais antiga fonte termal de Nasu."
+      ],
+      "revisao": {
+        "estado": "parcial",
+        "resumo": "adaptado_do_texto"
+      }
+    }
   },
   {
     "id": "kisaragi-station",
@@ -67,7 +127,21 @@
     "notaEncontro": "se vc pegar o trem errado pode cair na estação da morte mesmo",
     "categoria": "",
     "imagem": "/casa/img/cartas/kisaragi.jpg",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Japão",
+      "codigoPais": "JP",
+      "regiao": "Japão",
+      "tradicao": "Folclore digital",
+      "tipoNarrativa": "folclore_digital",
+      "resumoEducativo": "Uma usuária chamada Hasumi relata na internet uma viagem de trem que deixa de seguir o percurso esperado. Ao descer na estação Kisaragi, encontra um lugar vazio, desconhecido e difícil de localizar. Outros participantes do fórum tentam ajudá-la enquanto as mensagens descrevem acontecimentos cada vez mais estranhos. O catálogo apresenta essa história como folclore digital japonês: o formato de conversa entre internautas participa da construção do suspense, sem comprovar uma viagem para outro mundo.",
+      "contextoCultural": "Narrativa japonesa de circulação digital. A data e a identificação do primeiro registro ainda precisam de conferência documental específica.",
+      "curiosidades": [],
+      "revisao": {
+        "estado": "parcial",
+        "resumo": "adaptado_do_texto"
+      }
+    }
   },
   {
     "id": "hachishakusama",
@@ -81,7 +155,21 @@
     "notaEncontro": "criaturas malignas podem se trasnformar em qualquer um. desconfie",
     "categoria": "",
     "imagem": "/casa/img/cartas/hachishakusama.jpg",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Japão",
+      "codigoPais": "JP",
+      "regiao": "Japão",
+      "tradicao": null,
+      "tipoNarrativa": "folclore_digital",
+      "resumoEducativo": "Durante uma visita aos avós, um menino ouve um som repetido vindo do jardim e vê uma mulher de altura extraordinária. Os avós reconhecem a ameaça e procuram ajuda para protegê-lo. O garoto deve permanecer em um quarto preparado com objetos de proteção e não abrir a porta, mesmo que escute vozes familiares. A versão do catálogo apresenta uma narrativa de terror da internet, não um testemunho comprovado nem uma tradição antiga automaticamente estabelecida.",
+      "contextoCultural": "Narrativa de terror de circulação digital japonesa. A publicação inicial e sua data ainda precisam de conferência documental específica.",
+      "curiosidades": [],
+      "revisao": {
+        "estado": "parcial",
+        "resumo": "adaptado_do_texto"
+      }
+    }
   },
   {
     "id": "meng-jiangnu",
@@ -95,7 +183,21 @@
     "notaEncontro": "grandes lugares escondem muitos segredos de mortes",
     "categoria": "",
     "imagem": "/casa/img/cartas/meng-jiangnu.jpg",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "China",
+      "codigoPais": "CN",
+      "regiao": "China",
+      "tradicao": "Lenda tradicional associada à Grande Muralha",
+      "tipoNarrativa": "pendente",
+      "resumoEducativo": "Meng Jiangnü parte em busca do marido, levado para trabalhar na construção de fortificações. Depois de uma longa viagem, descobre que ele morreu durante o trabalho. Em uma versão conhecida, seu choro provoca o desabamento de parte da muralha e revela os restos dos trabalhadores. A história possui diferentes desfechos e integra a tradição narrativa chinesa. O sofrimento e a busca da personagem pertencem ao enredo, sem transformar o episódio sobrenatural em acontecimento histórico comprovado.",
+      "contextoCultural": "Lenda tradicional chinesa com variantes regionais. Reconhecimento patrimonial nacional não equivale a inscrição individual na lista da UNESCO.",
+      "curiosidades": [],
+      "revisao": {
+        "estado": "parcial",
+        "resumo": "adaptado_do_texto"
+      }
+    }
   },
   {
     "id": "kuldhara",
@@ -109,7 +211,21 @@
     "notaEncontro": "cuidado ao andar por desertos",
     "categoria": "",
     "imagem": "/casa/img/cartas/kuldhara.jpg",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Índia",
+      "codigoPais": "IN",
+      "regiao": "Rajastão, Índia",
+      "tradicao": "Lenda de uma povoação abandonada",
+      "tipoNarrativa": "pendente",
+      "resumoEducativo": "Na versão do catálogo, os moradores de Kuldhara abandonam a aldeia depois que um ministro exige o casamento com a filha de um líder local. Ao partir, a comunidade teria lançado uma maldição para impedir novas ocupações. As ruínas são um lugar real do Rajastão, na Índia. A ameaça e a maldição fazem parte da narrativa transmitida sobre o abandono; a existência do lugar não comprova esses elementos nem determina, por si só, uma explicação histórica definitiva.",
+      "contextoCultural": "Narrativa local associada às ruínas de Kuldhara, no Rajastão. A apresentação turística da maldição não constitui prova histórica ou sobrenatural.",
+      "curiosidades": [],
+      "revisao": {
+        "estado": "parcial",
+        "resumo": "adaptado_do_texto"
+      }
+    }
   },
   {
     "id": "bakunawa",
@@ -123,7 +239,21 @@
     "notaEncontro": "vamos esperar e fazer muito barulho para que ela n devore nossa única lua",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Filipinas",
+      "codigoPais": "PH",
+      "regiao": "Filipinas",
+      "tradicao": null,
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Uma versão conta que o céu possuía sete luas. Uma enorme criatura serpentiforme, encantada pela beleza delas, começou a devorá-las uma por uma. Quando restou apenas a última, as comunidades temeram que a noite permanecesse eternamente escura. Para afastar Bakunawa, as pessoas começaram a fazer barulho com tambores e objetos de metal, tentando obrigá-la a devolver a lua.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "o-flautista-de-hamelin",
@@ -137,7 +267,21 @@
     "notaEncontro": "pague pelos serviços prestados",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Alemanha",
+      "codigoPais": "DE",
+      "regiao": "Hamelin, Alemanha",
+      "tradicao": "Lenda medieval",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Uma cidade sofre com uma infestação de ratos. Um homem misterioso aparece e promete eliminar os animais em troca de pagamento. Ele toca sua flauta, atraindo os ratos para longe da cidade. Depois de cumprir sua parte, os habitantes se recusam a recompensá-lo. Furioso, o flautista retorna. Mas dessa vez a música atrai as crianças, que o seguem para fora dos portões e desaparecem.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "a-dama-pe-de-cabra",
@@ -151,7 +295,21 @@
     "notaEncontro": "peça para olhar os pés de seus amados antes de se relacionar",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Portugal",
+      "codigoPais": "PT",
+      "regiao": "Portugal",
+      "tradicao": "Lenda medieval registrada no século XIV",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Um nobre, Dom Diogo Lopes, encontra uma mulher extraordinariamente bela nas montanhas. Ela aceita casar-se com ele sob uma condição: o marido não deverá fazer o sinal da cruz diante dela. Os dois têm filhos e vivem juntos até que, durante uma refeição, um acontecimento envolvendo os animais da casa provoca uma reação religiosa do marido. A promessa é quebrada. A mulher revela sua verdadeira natureza, com pés de cabra, e desaparece levando uma das crianças.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "peter-stumpp",
@@ -165,7 +323,21 @@
     "notaEncontro": "?",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Alemanha",
+      "codigoPais": "DE",
+      "regiao": "Bedburg, Alemanha",
+      "tradicao": null,
+      "tipoNarrativa": "relato_lendario",
+      "resumoEducativo": "No final do século XVI, Peter Stumpp foi acusado de cometer assassinatos e de transformar-se em lobo. Segundo relatos publicados na época, ele teria recebido do Diabo um objeto mágico que lhe permitiria assumir a forma de uma criatura feroz e atacar pessoas. Stumpp foi julgado e executado em 1589. O caso se tornou uma das narrativas históricas mais conhecidas sobre lobisomens.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "licaao",
@@ -179,7 +351,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Grécia",
+      "codigoPais": "GR",
+      "regiao": "Arcádia, Grécia",
+      "tradicao": "Mitologia antiga",
+      "tipoNarrativa": "mitologia",
+      "resumoEducativo": "Licaão era um governante conhecido por sua violência. Quando Zeus visita seu palácio disfarçado de viajante, o rei decide colocar à prova a natureza divina do hóspede. Ele prepara uma refeição macabra envolvendo carne humana. Zeus descobre a atrocidade e pune o governante, transformando-o em lobo. A metamorfose não apaga sua natureza cruel: o corpo se transforma, mas a violência permanece.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "o-holandes-voador",
@@ -193,7 +379,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": null,
+      "codigoPais": null,
+      "regiao": "Tradições marítimas europeias",
+      "tradicao": "Lenda de navio fantasma",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Um capitão enfrenta uma tempestade terrível e se recusa a desistir de sua viagem. Em algumas versões, desafia a própria vontade divina, jurando que atravessará as águas mesmo que demore até o fim dos tempos. Sua arrogância provoca uma condenação: ele e seu navio ficam presos numa viagem eterna, sem jamais alcançar um porto. Marinheiros passam a contar histórias sobre uma embarcação espectral que surge durante tempestades, desaparecendo antes que alguém consiga aproximar-se",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "barba-azul",
@@ -207,7 +407,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "França",
+      "codigoPais": "FR",
+      "regiao": "França",
+      "tradicao": "Conto literário publicado por Charles Perrault em 1697",
+      "tipoNarrativa": "narrativa_literaria",
+      "resumoEducativo": "Um homem rico se casa com uma jovem e lhe entrega as chaves de sua residência. Ela pode entrar em qualquer aposento, exceto num quarto cuja abertura é expressamente proibida. Quando o marido viaja, a curiosidade vence o medo. A jovem abre a porta e encontra os corpos das mulheres com quem ele havia sido casado anteriormente. Ao retornar, Barba Azul descobre que ela desobedeceu à ordem e decide matá-la também.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "negrinho-do-pastoreio",
@@ -221,7 +435,21 @@
     "notaEncontro": "se vc pegar o trem errado pode cair na estação da morte mesmo",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Brasil",
+      "codigoPais": "BR",
+      "regiao": "Rio Grande do Sul, Brasil",
+      "tradicao": "Folclore afro-brasileiro e cristão",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Um menino escravizado recebe a responsabilidade de cuidar dos cavalos de um fazendeiro cruel. Quando um dos animais desaparece, o homem o pune violentamente e abandona a criança num formigueiro, esperando que morra. Na manhã seguinte, encontra uma cena impossível: o menino está vivo, sem ferimentos, acompanhado de Nossa Senhora e dos animais desaparecidos. A criança parte livre, enquanto o fazendeiro percebe a gravidade de sua crueldade.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "ana-jansen",
@@ -235,7 +463,21 @@
     "notaEncontro": "se vc pegar o trem errado pode cair na estação da morte mesmo",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": null,
+      "codigoPais": null,
+      "regiao": "São Luís, Maranhão",
+      "tradicao": "Lenda urbana com figura histórica real",
+      "tipoNarrativa": "relato_lendario",
+      "resumoEducativo": "Ana Joaquina Jansen foi uma mulher poderosa da elite maranhense do século XIX, cuja memória ficou cercada de controvérsias e narrativas sobre maus-tratos a pessoas escravizadas. Depois de sua morte, surgiu a tradição de que ela havia sido condenada a percorrer eternamente as ruas de São Luís numa carruagem fantasmagórica. Algumas versões descrevem cavalos decapitados e um cocheiro igualmente sem cabeça. O castigo sobrenatural seria consequência das crueldades atribuídas à personagem",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "el-hombre-caiman",
@@ -249,7 +491,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Colômbia",
+      "codigoPais": "CO",
+      "regiao": "Plato, Colômbia",
+      "tradicao": "Lenda regional do rio Magdalena",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Saúl Montenegro era um homem que desejava observar secretamente as mulheres enquanto elas se banhavam no rio. Para isso, procura ajuda sobrenatural e consegue uma substância capaz de transformá-lo temporariamente em jacaré. O plano parece funcionar, mas algo dá errado com o encantamento necessário para recuperar sua aparência humana. Saúl acaba preso numa forma híbrida, metade homem, metade jacaré.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "a-ilha-das-bonecas",
@@ -263,7 +519,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "México",
+      "codigoPais": "MX",
+      "regiao": "Xochimilco, México",
+      "tradicao": "Lenda contemporânea ligada a um lugar real",
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Don Julián Santana Barrera viveu durante décadas numa área dos canais de Xochimilco. Segundo a tradição, uma menina teria morrido afogada nas proximidades. Julián passou a acreditar que o espírito dela permanecia no lugar. Para oferecer proteção ou acalmar a presença, começou a pendurar bonecas entre as árvores. Com o tempo, centenas de bonecas passaram a cobrir a ilha, criando uma paisagem extremamente inquietante. O homem e a coleção existiram",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "mary-san",
@@ -277,7 +547,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Japão",
+      "codigoPais": "JP",
+      "regiao": "Japão",
+      "tradicao": null,
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Uma menina cresce e decide jogar fora uma boneca chamada Mary, companheira de infância que já não deseja guardar. Naquela noite, o telefone toca. Uma voz infantil anuncia que Mary está num lugar distante. Pouco depois, outra ligação. A voz diz que está mais perto. Os telefonemas continuam, e a boneca parece aproximar-se cada vez mais da residência. Até que a menina atende a última chamada e descobre que Mary já está atrás dela.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "ningen",
@@ -291,7 +575,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Japão",
+      "codigoPais": "JP",
+      "regiao": "Japão, relatos ambientados no oceano Antártico",
+      "tradicao": null,
+      "tipoNarrativa": "folclore_digital",
+      "resumoEducativo": "Tripulantes de uma embarcação de pesquisa estariam navegando por águas geladas quando encontraram uma forma branca enorme, inicialmente confundida com um bloco de gelo ou animal marinho. Quando o objeto se moveu, perceberam algo impossível: a criatura parecia ter características humanas, mas dimensões gigantescas. A história passou a circular em fóruns japoneses, acompanhada de supostas fotografias e vídeos nunca confirmados como registros de um animal desconhecido.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "o-jogo-do-elevador",
@@ -305,7 +603,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Coreia do Sul",
+      "codigoPais": "KR",
+      "regiao": "Coreia do Sul e internet internacional ·",
+      "tradicao": null,
+      "tipoNarrativa": "folclore_digital",
+      "resumoEducativo": "Uma lenda digital afirma que existe uma forma de fazer um elevador chegar a um lugar que não pertence ao nosso mundo. Durante a viagem, uma mulher desconhecida pode entrar e tentar conversar com o passageiro. Segundo o conto, responder a ela seria um erro terrível, pois a visitante não seria humana. Quando as portas finalmente se abrem, o prédio parece familiar, mas o mundo do lado de fora está completamente vazio.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "o-fusca-amarelo-da-rodovia-karak",
@@ -319,7 +631,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Malásia",
+      "codigoPais": "MY",
+      "regiao": "Malásia",
+      "tradicao": null,
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Um motorista atravessa uma rodovia montanhosa durante a madrugada e encontra um Fusca amarelo trafegando lentamente. Ele ultrapassa o veículo, mas, minutos depois, o mesmo carro aparece novamente à frente. A situação se repete. Em algumas versões, ao observar o interior do automóvel, o motorista percebe que não existe ninguém dirigindo. A narrativa se tornou associada à reputação perigosa da rodovia Karak, marcada por acidentes reais",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "the-crying-boy",
@@ -333,7 +659,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Reino Unido",
+      "codigoPais": "GB",
+      "regiao": "Reino Unido",
+      "tradicao": null,
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Famílias britânicas passam a temer reproduções de uma pintura de um menino chorando. Segundo a lenda, cópias do quadro seriam encontradas intactas entre os escombros de casas incendiadas. O rumor faz pessoas acreditarem que a imagem atrai o fogo, e algumas decidem queimar seus quadros para se livrar da suposta maldição. A existência da pintura não comprova os poderes que lhe foram atribuídos.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "adaptado_do_texto"
+      }
+    }
   },
   {
     "id": "black-volga",
@@ -347,7 +687,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Polônia",
+      "codigoPais": "PL",
+      "regiao": "Polônia e Europa Oriental",
+      "tradicao": null,
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Crianças eram advertidas para não se aproximar de um carro preto com cortinas nas janelas. Segundo algumas versões, seus ocupantes sequestravam pessoas para retirar sangue. Em outras, quem dirigia era uma figura demoníaca que perguntava as horas antes de anunciar a morte do desconhecido. A lenda cresceu num contexto de medo do poder estatal, desaparecimentos e rumores sobre sequestros.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "this-man",
@@ -361,7 +715,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Itália",
+      "codigoPais": "IT",
+      "regiao": "Itália e internet mundial",
+      "tradicao": null,
+      "tipoNarrativa": "folclore_digital",
+      "resumoEducativo": "Um site começou a divulgar o desenho do rosto de um homem misterioso. Segundo a história, pacientes de diferentes países teriam descrito a mesma pessoa em seus sonhos, apesar de nunca terem se encontrado. A imagem viralizou, e internautas começaram a dizer que também haviam sonhado com aquele rosto. A sensação era de que existia alguém capaz de entrar nos sonhos de desconhecidos.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "bush-baby",
@@ -375,7 +743,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Nigéria",
+      "codigoPais": "NG",
+      "regiao": "Nigéria",
+      "tradicao": "Folclore escolar contemporâneo",
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Estudantes de internatos são advertidos de que, durante determinadas noites, podem ouvir o choro de um bebê vindo do lado de fora dos dormitórios. Alguns contam que o som pertence a uma criatura misteriosa que ninguém deveria procurar. Quando um aluno decide descobrir de onde vem o choro, a história geralmente termina com seu encontro assustador com uma presença não humana.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "mamlambo",
@@ -389,7 +771,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "África do Sul",
+      "codigoPais": "ZA",
+      "regiao": "África do Sul",
+      "tradicao": null,
+      "tipoNarrativa": "relato_lendario",
+      "resumoEducativo": "Moradores da região de Mount Ayliff começaram a atribuir mortes próximas ao rio Mzintlava a uma criatura aquática sobrenatural. A entidade foi descrita em reportagens como um enorme ser de características misturadas, semelhante a uma serpente ou animal aquático fantástico. Entre janeiro e abril de 1997, diversos falecimentos passaram a ser associados à criatura. As autoridades apresentaram explicações naturais para parte das lesões observadas nos corpos, mas as histórias continuaram circulando entre moradores",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "a-mulher-do-tunel-de-mount-victoria",
@@ -403,7 +799,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Nova Zelândia",
+      "codigoPais": "NZ",
+      "regiao": "Wellington, Nova Zelândia",
+      "tradicao": "Tradição mais antiga ainda difundida hoje",
+      "tipoNarrativa": "relato_lendario",
+      "resumoEducativo": "Durante a construção do túnel de Mount Victoria, em 1930, Phyllis Symons foi assassinada e enterrada na área da obra. Depois da descoberta do crime, a região passou a ser associada à presença de seu espírito. Uma tradição difundida entre motoristas diz que buzinar ao atravessar o túnel pode homenagear a vítima ou manter a assombração afastada. O assassinato aconteceu de verdade",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "a-boneca-da-xuxa",
@@ -417,7 +827,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Brasil",
+      "codigoPais": "BR",
+      "regiao": "Brasil",
+      "tradicao": null,
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Famílias brasileiras passaram a contar histórias sobre bonecas da apresentadora Xuxa que se moveriam sozinhas ou tentariam atacar crianças durante a noite. Algumas versões falavam de olhos que acompanhavam pessoas e de bonecas encontradas em posições diferentes daquelas em que haviam sido deixadas. Os boatos se misturavam a acusações de mensagens satânicas escondidas em músicas, que eram reproduzidas ao contrário.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "a-faca-do-fofao",
@@ -431,7 +855,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Brasil",
+      "codigoPais": "BR",
+      "regiao": "Brasil",
+      "tradicao": null,
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Começou a circular o boato de que bonecos do personagem Fofão escondiam um punhal no interior do corpo. Alguns adultos abriram os brinquedos e encontraram uma peça rígida e pontiaguda, interpretada como evidência da história. Logo surgiram novas versões, incluindo acusações de pactos malignos e brinquedos que teriam sido enviados para prejudicar crianças.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "a-gangue-dos-palhacos",
@@ -445,7 +883,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Brasil",
+      "codigoPais": "BR",
+      "regiao": "Brasil, especialmente São Paulo",
+      "tradicao": null,
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Crianças começavam a ouvir de colegas que homens vestidos de palhaço estavam circulando pelas ruas em veículos suspeitos. Segundo as histórias, ofereciam doces ou brinquedos para atrair crianças e sequestrá-las. Os relatos se espalhavam entre escolas e famílias, criando medo de qualquer desconhecido fantasiado.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "o-et-de-varginha",
@@ -459,7 +911,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Brasil",
+      "codigoPais": "BR",
+      "regiao": "Minas Gerais, Brasil",
+      "tradicao": null,
+      "tipoNarrativa": "relato_lendario",
+      "resumoEducativo": "Em 20 de janeiro de 1996, três jovens atravessavam um terreno na cidade de Varginha quando afirmaram ter encontrado uma criatura agachada. Descreveram pele marrom, aparência oleosa e olhos avermelhados. Uma das testemunhas contou que acreditou ter visto o próprio Diabo. Logo começaram a circular rumores de que militares haviam capturado seres desconhecidos e levado seus corpos para exames secretos",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "a-bruxa-de-guadalupe",
@@ -473,7 +939,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "México",
+      "codigoPais": "MX",
+      "regiao": "Nuevo León, México",
+      "tradicao": null,
+      "tipoNarrativa": "relato_lendario",
+      "resumoEducativo": "Na madrugada de 16 de janeiro de 2004, um policial chamado Leonardo Samaniego realizava uma ronda em Guadalupe. Ele afirmou ter visto uma figura semelhante a uma mulher descendo de uma árvore, com características que lhe pareceram monstruosas. Segundo seu relato, a criatura se aproximou de maneira ameaçadora, e ele acabou entrando em pânico. O caso foi registrado na imprensa mexicana e passou a ser conhecido como um encontro com uma bruxa voadora. A alegação do policial é documentada",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "a-freira-do-hospital-de-torreon",
@@ -487,7 +967,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "México",
+      "codigoPais": "MX",
+      "regiao": "Coahuila, México",
+      "tradicao": null,
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Pacientes de um hospital afirmavam ter recebido atendimento durante a madrugada de uma freira vestida de branco. A mulher oferecia ajuda, orientava enfermeiras e cuidava dos doentes que precisavam de medicação. Quando os pacientes perguntavam quem era aquela religiosa, os funcionários afirmavam não conhecer ninguém com sua descrição. Algumas enfermeiras tentavam encontrá-la, mas a figura desaparecia antes que pudessem conversar.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "maria-de-avila",
@@ -501,7 +995,21 @@
     "notaEncontro": "",
     "categoria": "Espíritos e Aparições",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "México",
+      "codigoPais": "MX",
+      "regiao": "Cidade do México, México",
+      "tradicao": null,
+      "tipoNarrativa": "relato_lendario",
+      "resumoEducativo": "Segundo a lenda, María se apaixona por Arrutia, mas seus irmãos pagam para que ele a abandone. A jovem é enviada a um convento e morre tragicamente. Depois, religiosas afirmam ver uma figura pendurada numa árvore e uma aparição refletida na fonte. O catálogo relaciona essa narrativa à memória de uma religiosa histórica, mas essa associação ainda precisa de revisão documental; as aparições não são apresentadas como fatos comprovados.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "adaptado_do_texto"
+      }
+    }
   },
   {
     "id": "slender-man",
@@ -515,7 +1023,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Estados Unidos",
+      "codigoPais": "US",
+      "regiao": "Estados Unidos",
+      "tradicao": null,
+      "tipoNarrativa": "narrativa_literaria",
+      "resumoEducativo": "Fotografias começaram a circular num fórum mostrando um homem extraordinariamente alto, vestido de preto, observando crianças de longe. Acompanhando as imagens, surgiram histórias sobre desaparecimentos e uma entidade que perseguiria pessoas nas florestas. O personagem tornou-se conhecido como Slender Man.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "polybius",
@@ -529,7 +1051,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Estados Unidos",
+      "codigoPais": "US",
+      "regiao": "Oregon, Estados Unidos",
+      "tradicao": null,
+      "tipoNarrativa": "folclore_digital",
+      "resumoEducativo": "Uma máquina de fliperama desconhecida teria surgido em alguns estabelecimentos de Portland. Jogadores que experimentavam o jogo passavam a relatar pesadelos, dores de cabeça e perda de memória. Homens vestidos de preto visitariam os estabelecimentos para recolher informações das máquinas. De repente, todos os aparelhos desapareceriam, como se o jogo nunca tivesse existido.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "the-hands-resist-him",
@@ -543,7 +1079,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Estados Unidos",
+      "codigoPais": "US",
+      "regiao": "Estados Unidos",
+      "tradicao": "Lenda online de 2000",
+      "tipoNarrativa": "relato_lendario",
+      "resumoEducativo": "Uma família adquiriu uma pintura que mostrava um menino ao lado de uma boneca, diante de uma porta coberta por mãos. Segundo o anúncio de venda publicado no eBay, a filha dos antigos proprietários começou a afirmar que os personagens saíam do quadro durante a noite. Os donos instalaram uma câmera para observar a obra e alegaram encontrar imagens estranhas. A história viralizou, fazendo pessoas acreditarem que simplesmente olhar para a pintura poderia provocar acontecimentos sobrenaturais. A obra é real e foi pintada por Bill Stoneham em 1972",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "as-escadas-no-meio-da-floresta",
@@ -557,7 +1107,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "canadá",
+      "codigoPais": "CA",
+      "regiao": "canadá",
+      "tradicao": null,
+      "tipoNarrativa": "narrativa_literaria",
+      "resumoEducativo": "Uma pessoa que se apresenta como integrante de uma equipe de busca e salvamento começa a relatar acontecimentos estranhos em áreas florestais. Um dos detalhes mais assustadores é o aparecimento de escadarias perfeitamente construídas no meio de lugares isolados, sem qualquer casa ao redor. Os profissionais experientes afirmariam que é comum encontrá-las, mas ordenam que os novatos nunca se aproximem. Os relatos também descrevem desaparecimentos misteriosos e pessoas encontradas em condições inexplicáveis.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "romaozinho",
@@ -571,7 +1135,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Brasil",
+      "codigoPais": "BR",
+      "regiao": "Brasil",
+      "tradicao": null,
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Um menino come a refeição que deveria levar ao pai e inventa que sua mãe a entregou a outro homem. Enfurecido, o pai mata a esposa. Antes de morrer, ela amaldiçoa o filho, que passa a vagar pelo mundo sem crescer, assustando pessoas e atormentando animais.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "a-procissao-das-almas",
@@ -585,7 +1163,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": null,
+      "codigoPais": null,
+      "regiao": "Cidade de Goiás",
+      "tradicao": "Tradição oral registrada em literatura regional",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Uma mulher observa pela janela uma procissão silenciosa. Os participantes usam roupas brancas, carregam velas e caminham pelas ruas escuras, embora não houvesse celebração religiosa prevista. Um dos encapuzados entrega uma vela à mulher, dizendo que voltará para buscá-la. No dia seguinte, ela abre a gaveta onde guardou o objeto e encontra um osso humano.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "barbara-dos-prazeres",
@@ -599,7 +1191,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": null,
+      "codigoPais": null,
+      "regiao": "Arco do Teles, Centro do Rio",
+      "tradicao": "Tradição histórica",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "A história fala de uma mulher portuguesa que chega ao Brasil no século XVIII. Após crimes atribuídos a ela, Bárbara acaba vivendo nas proximidades do Arco do Teles. Com o envelhecimento, passa a temer perder a beleza. Segundo o folclore, recorre à magia e ao sangue de crianças e animais na tentativa de recuperar a juventude. Sua reputação torna o Arco um lugar temido.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "almamula",
@@ -613,7 +1219,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": null,
+      "codigoPais": null,
+      "regiao": "Santiago del Estero",
+      "tradicao": "Folclore rural",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Segundo antigas narrativas, uma mulher é condenada a transformar-se numa mula monstruosa depois de uma relação proibida por normas morais e religiosas de sua comunidade. Durante as noites de tempestade, ela atravessa povoados arrastando correntes, com fogo saindo da boca e dos olhos. Seus gritos parecem humanos, como se ainda estivesse sofrendo pelo castigo recebido.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "morgan-s-corner",
@@ -627,7 +1247,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": null,
+      "codigoPais": null,
+      "regiao": "Oʻahu",
+      "tradicao": "Lenda urbana popular nas décadas finais do século XX",
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Um casal estaciona numa estrada isolada. O carro para de funcionar, e o rapaz sai para procurar ajuda. A namorada permanece sozinha, ouvindo durante a noite um som estranho no teto do veículo. Quando a polícia chega, pede que ela saia do automóvel sem olhar para trás. Ela desobedece e descobre o corpo do namorado pendurado numa árvore, com os pés raspando no teto do carro.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "alyoshenka",
@@ -641,7 +1275,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Rússia",
+      "codigoPais": "RU",
+      "regiao": "Kyshtym, Rússia",
+      "tradicao": null,
+      "tipoNarrativa": "relato_lendario",
+      "resumoEducativo": "Em 1996, Tamara Prosvirina encontra algo extraordinariamente pequeno, com aparência incomum, e leva para casa. Segundo relatos, ela acreditava que a criatura estava viva e passa a cuidar dela, dando-lhe o nome Alyoshenka. Depois que Tamara deixa a residência, os restos da suposta criatura são fotografados e filmados. O material acaba desaparecendo, dando início a histórias sobre alienígenas e experiências secretas.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "o-passaro-negro-de-chernobyl",
@@ -655,7 +1303,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": null,
+      "codigoPais": null,
+      "regiao": "Chernobyl",
+      "tradicao": "Lenda digital posterior a 2002",
+      "tipoNarrativa": "folclore_digital",
+      "resumoEducativo": "A história conta que, nas semanas anteriores ao desastre nuclear, trabalhadores começaram a observar uma criatura enorme, de asas negras e olhos vermelhos. Alguns teriam recebido telefonemas ameaçadores e sofrido pesadelos depois dos encontros. Quando o reator explodiu, a criatura supostamente apareceu novamente sobre a usina, como se tivesse anunciado a tragédia.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "silverpilen",
@@ -669,7 +1331,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Suécia",
+      "codigoPais": "SE",
+      "regiao": "Suécia",
+      "tradicao": null,
+      "tipoNarrativa": "lenda_urbana",
+      "resumoEducativo": "Uma jovem pega um trem à noite, depois de sair de uma festa. Os passageiros parecem estranhos, mas ela permanece no vagão. Quando tenta descer, percebe que o trem não para nas estações habituais. Finalmente, as portas se abrem numa estação abandonada chamada Kymlinge. Os outros passageiros atravessam uma porta fechada como se não fossem feitos de matéria. O Silverpilen foi inspirado num trem prateado que realmente circulou em Estocolmo. A estação Kymlinge também existe, mas nunca foi inaugurada",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "sereias",
@@ -683,7 +1359,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Inglaterra",
+      "codigoPais": "GB",
+      "regiao": "Cornualha, Inglaterra",
+      "tradicao": "Lenda tradicional",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Na vila de Zennor, um jovem chamado Matthew Trewhella era conhecido por sua belíssima voz no coral da igreja. Uma mulher misteriosa começou a assistir às celebrações para ouvi-lo cantar. Os dois se apaixonaram, mas ela escondia um segredo: era uma sereia. Um dia, o rapaz desapareceu. Segundo a lenda, seguiu a amada para o oceano e nunca mais voltou",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "homem-do-saco",
@@ -697,7 +1387,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": null,
+      "codigoPais": null,
+      "regiao": "Brasil, Portugal, Espanha e América Latina",
+      "tradicao": "Folclore de advertência",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Uma criança desobedece aos pais e sai sozinha. Um homem misterioso, carregando um enorme saco, aparece oferecendo doces ou prometendo levá-la para algum lugar. Segundo versões da história, crianças capturadas são levadas para longe e nunca mais retornam.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "leprechaun",
@@ -711,7 +1415,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Irlanda",
+      "codigoPais": "IE",
+      "regiao": "Irlanda",
+      "tradicao": "Folclore tradicional",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Em uma história recolhida na Irlanda na década de 1930, um homem encontra um pequeno sapateiro sobrenatural trabalhando perto de uma árvore. Ele captura o duende e exige saber onde seu ouro está escondido. O Leprechaun indica uma árvore e o homem decide marcá-la antes de voltar com ferramentas para cavar. Ao retornar, descobre que o duende colocou a mesma marca em todas as árvores. Agora ele não sabe onde o tesouro está.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "selkie",
@@ -725,7 +1443,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Escócia",
+      "codigoPais": "GB",
+      "regiao": "Ilhas Órcades, Escócia",
+      "tradicao": "Folclore tradicional",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Um homem encontra mulheres misteriosas dançando numa praia. Elas são Selkies, criaturas capazes de abandonar temporariamente a pele de foca e assumir aparência humana. Encantado por uma delas, o homem esconde sua pele para impedir que retorne ao mar. A mulher acaba vivendo com ele e tem filhos, mas nunca deixa de sentir saudade do oceano. Anos depois, uma das crianças encontra a pele escondida. A mulher finalmente recupera sua liberdade e desaparece nas águas.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "as-sereias-de-odisseu",
@@ -739,7 +1471,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Grécia",
+      "codigoPais": "GR",
+      "regiao": "Grécia Antiga",
+      "tradicao": "Mitologia clássica",
+      "tipoNarrativa": "mitologia",
+      "resumoEducativo": "Odisseu precisa atravessar uma região onde criaturas sobrenaturais atraem marinheiros com uma música irresistível. Quem escuta o canto perde a capacidade de resistir e acaba encontrando a morte. Para sobreviver, Odisseu manda que seus companheiros tapem os ouvidos com cera e o amarrem ao mastro do navio. Assim, consegue escutar a música sem abandonar a embarcação.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "baba-yaga",
@@ -753,7 +1499,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Rússia",
+      "codigoPais": "RU",
+      "regiao": "Rússia",
+      "tradicao": "Contos populares tradicionais",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Uma menina é enviada pela madrasta para pedir uma agulha e linha à irmã dela, que na verdade é Baba Yaga. A bruxa vive numa floresta perigosa, numa casa sobrenatural. A menina recebe ajuda para superar os obstáculos, mas descobre que Baba Yaga pretende devorá-la. Ela consegue fugir levando objetos que se transformam em barreiras mágicas. A bruxa parte em perseguição, viajando num pilão e apagando os rastros com uma vassoura.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "boitata",
@@ -767,7 +1527,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Brasil",
+      "codigoPais": "BR",
+      "regiao": "Brasil",
+      "tradicao": "Folclore tradicional, com registro de 1560",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Em uma versão, uma cobra gigantesca atravessa um período de escuridão e enchentes, escondendo-se até que o mundo volte ao normal. Faminta, começa a devorar os olhos dos animais. Aos poucos, seu corpo ganha uma luminosidade extraordinária. Ela passa a ser conhecida como Boitatá, uma serpente feita de fogo. Em muitas versões, castiga aqueles que provocam incêndios e destroem a natureza.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "annabelle",
@@ -781,7 +1555,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Estados Unidos",
+      "codigoPais": "US",
+      "regiao": "Estados Unidos",
+      "tradicao": null,
+      "tipoNarrativa": "relato_lendario",
+      "resumoEducativo": "Uma estudante de enfermagem chamada Donna ganhou de sua mãe uma boneca de pano, do modelo Raggedy Ann. Ela dividia um apartamento com sua amiga Angie e, pouco tempo depois, as duas começaram a perceber acontecimentos estranhos. A boneca aparecia em posições diferentes daquelas em que havia sido deixada. Pequenos bilhetes com pedidos de ajuda também teriam surgido misteriosamente pela casa. Segundo o relato divulgado pelo casal Warren, uma médium afirmou que o espírito de uma menina chamada Annabelle Higgins estava ligado à boneca. Posteriormente, os investigadores paranormais passaram a alegar que a presença seria uma entidade maligna fingindo ser uma criança.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "umibozu",
@@ -795,7 +1583,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": false
+    "provisoria": false,
+    "cultura": {
+      "pais": "Japão",
+      "codigoPais": "JP",
+      "regiao": "Japão",
+      "tradicao": "Folclore marítimo tradicional",
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": "Pescadores japoneses contam histórias sobre uma criatura gigantesca que surge repentinamente das águas durante viagens pelo oceano. Seu corpo é escuro como a noite, com uma enorme cabeça arredondada que lembra a de um monge budista. Em algumas versões, aparece quando o mar está calmo, transformando a tranquilidade em uma tempestade aterrorizante. A criatura se ergue acima dos barcos e tenta destruí-los, provocando ondas violentas e arrastando embarcações para o fundo do mar. Segundo certas narrativas, o Umibōzu exige que os marinheiros lhe entreguem um recipiente para recolher água e afundar o barco. A única maneira de enganá-lo seria oferecer um recipiente sem fundo, impedindo que consiga enchê-lo.",
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "extrativo_do_texto"
+      }
+    }
   },
   {
     "id": "kappa",
@@ -809,7 +1611,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": true
+    "provisoria": true,
+    "cultura": {
+      "pais": "Japão",
+      "codigoPais": "JP",
+      "regiao": "Japão",
+      "tradicao": null,
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": null,
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "pendente"
+      }
+    }
   },
   {
     "id": "kasa-obake",
@@ -823,7 +1639,21 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": true
+    "provisoria": true,
+    "cultura": {
+      "pais": "Japão",
+      "codigoPais": "JP",
+      "regiao": "Japão",
+      "tradicao": null,
+      "tipoNarrativa": "folclore_tradicional",
+      "resumoEducativo": null,
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "pendente"
+      }
+    }
   },
   {
     "id": "la-ursa",
@@ -837,6 +1667,20 @@
     "notaEncontro": "",
     "categoria": "",
     "imagem": "",
-    "provisoria": true
+    "provisoria": true,
+    "cultura": {
+      "pais": "Brasil",
+      "codigoPais": "BR",
+      "regiao": "Brasil",
+      "tradicao": "Tradição carnavalesca",
+      "tipoNarrativa": "manifestacao_popular",
+      "resumoEducativo": null,
+      "contextoCultural": null,
+      "curiosidades": [],
+      "revisao": {
+        "estado": "pendente",
+        "resumo": "pendente"
+      }
+    }
   }
 ]

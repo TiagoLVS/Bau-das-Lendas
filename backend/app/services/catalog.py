@@ -5,6 +5,7 @@ from sqlalchemy import select
 from app.core.config import get_settings
 from app.db.session import get_engine
 from app.models import Legend
+from app.schemas import CulturalContent
 
 
 def legend_data(legend):
@@ -19,6 +20,9 @@ def seed_catalog(db, path=None):
         raise ValueError('O catálogo precisa de exatamente 60 IDs distintos.')
     if sorted(e['numero'] for e in entries) != list(range(1, 61)):
         raise ValueError('O catálogo precisa ter posições de 1 a 60.')
+    for entry in entries:
+        if entry.get('cultura') is not None:
+            entry['cultura'] = CulturalContent.model_validate(entry['cultura']).model_dump()
     existing = set(db.scalars(select(Legend.id)))
     if existing - set(ids):
         raise ValueError('Banco contém IDs fora do catálogo; nenhuma carta foi removida.')

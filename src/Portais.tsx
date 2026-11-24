@@ -49,13 +49,16 @@ export default function Portais({ aoFechar }: Props) {
         <header className="painel-topo">
           <div>
             <p className="painel-sobre">Duas passagens</p>
-            <h2>Portais</h2>
+            <h2>Explorar</h2>
           </div>
           <button ref={fechar} type="button" className="botao-discreto" onClick={aoFechar}>
             Fechar <span aria-hidden="true">×</span>
           </button>
         </header>
 
+        <p>A câmera só será solicitada depois de tocar em INICIAR CÂMERA na experiência.</p>
+        <p><a className="botao-ritual" href={URL_RA}>Abrir experiência de realidade aumentada →</a></p>
+        <p>Consulte sua disponibilidade diária e o contador no <a href="/?conta=1">Perfil</a> ou ao entrar na experiência.</p>
         <div className="portais-selos">
           {portais.map(p => (
             <article className="portal-selo" key={p.numero}>

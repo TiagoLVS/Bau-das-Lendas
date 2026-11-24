@@ -36,3 +36,5 @@ test('somente QR 02 da mesma origem pode posicionar o baú', () => {
   for (const value of [`${origin}/`,`${origin}/ra.html?lenda=kiyohime`,'https://evil.example/ra.html','javascript:alert(1)','ilegivel'])
     assert.equal(isRitualQr(value,origin),false);
 });
+test('pose rejeita dimensões/FOV não finitos e cantos fora do quadro',()=>{const q=[{x:200,y:100},{x:400,y:100},{x:400,y:300},{x:200,y:300}];for(const [w,h,f]of[[Infinity,480,60],[640,NaN,60],[640,480,NaN],[640,480,0],[640,480,180]])assert.equal(estimateQrPose(q,w,h,f),null);assert.equal(estimateQrPose(q.map(p=>({x:p.x-300,y:p.y})),640,480),null)})
+test('QRs incompletos, cruzados e falsos destinos não são equivalentes',()=>{assert.equal(estimateQrPose([{x:100,y:100},{x:300,y:300},{x:300,y:100},{x:100,y:300}],640,480),null);for(const suffix of['/','/ra.html/','/ra.html#','/ra.html?','/ra.html?x=1','/RA.html','/%72a.html'])assert.equal(isRitualQr('https://bau.example'+suffix,'https://bau.example'),false);assert.equal(isRitualQr('https://bau.example:443/ra.html','https://bau.example'),true)})

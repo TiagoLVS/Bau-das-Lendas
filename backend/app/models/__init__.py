@@ -1,6 +1,6 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
-from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, Date, Index, DateTime, ForeignKey, Integer, JSON, String, Text, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from app.core.security import new_id
@@ -60,3 +60,18 @@ class AuthSession(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     user_id: Mapped[str] = mapped_column(ForeignKey('users.id'), index=True)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class DailyReward(Base):
+    __tablename__ = 'daily_rewards'
+    __table_args__ = (
+        UniqueConstraint('user_id', 'reward_date', name='uq_daily_user_date'),
+        Index('ix_daily_rewards_user_claimed', 'user_id', 'claimed_at'),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    user_id: Mapped[str] = mapped_column(ForeignKey('users.id'))
+    legend_id: Mapped[str] = mapped_column(ForeignKey('legends.id'))
+    reward_date: Mapped[date] = mapped_column(Date)
+    claimed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    draw_request_id: Mapped[str] = mapped_column(ForeignKey('draw_requests.id'), unique=True)
+    is_new: Mapped[bool] = mapped_column(Boolean)

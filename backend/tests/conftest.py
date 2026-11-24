@@ -10,6 +10,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
 # Configuração exclusiva dos testes, nunca uma credencial de implantação.
+os.environ['APP_ENV'] = 'test'
 os.environ['DATABASE_URL'] = 'sqlite://'
 os.environ['JWT_SECRET'] = 'test-only-' + 'x' * 48
 os.environ['COOKIE_SECURE'] = 'false'
@@ -31,6 +32,9 @@ def engine(request, tmp_path):
             pytest.skip('Defina TEST_DATABASE_URL para testar PostgreSQL real.')
         if not url.startswith('postgresql'):
             pytest.fail('TEST_DATABASE_URL deve apontar para PostgreSQL.')
+        from sqlalchemy.engine import make_url
+        if make_url(url).database != 'bau_test':
+            pytest.fail('TEST_DATABASE_URL exige banco isolado chamado bau_test.')
         schema = 'test_bau_' + uuid4().hex
         admin = create_engine(url)
         with admin.begin() as conn:
@@ -38,6 +42,9 @@ def engine(request, tmp_path):
         db_engine = create_engine(url, connect_args={'options': f'-csearch_path={schema}'})
     else:
         db_engine = create_engine(f'sqlite:///{tmp_path / "test.db"}', connect_args={'check_same_thread': False})
+    if db_engine.dialect.name == 'sqlite':
+        from app.db.session import enable_sqlite_foreign_keys
+        enable_sqlite_foreign_keys(db_engine)
     config = Config(str(ROOT / 'alembic.ini'))
     config.set_main_option('script_location', str(ROOT / 'alembic'))
     with db_engine.begin() as conn:
@@ -74,3 +81,11 @@ def register(client, email='jogador@example.com'):
         'username': 'Jogador', 'email': email, 'password': 'senha-de-teste-123'})
     assert result.status_code == 201, result.text
     return result.json()
+
+
+@pytest.fixture
+def reward_clock(monkeypatch):
+    from datetime import datetime, timezone
+    clock = [datetime(2026, 11, 20, 12, tzinfo=timezone.utc)]
+    monkeypatch.setattr('app.services.collection.utc_now', lambda: clock[0])
+    return clock

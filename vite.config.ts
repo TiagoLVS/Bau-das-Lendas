@@ -14,5 +14,11 @@ export default defineConfig({
     fs: { deny: ['.env', '.env.*', '*.{crt,pem,key,p12,pfx,cer,der}', '.npmrc', '.yarnrc.yml', '**/.git/**', '**/backend/**', '**/.demo-account.local.json'] },
     proxy: { '^/api/': { target: 'http://127.0.0.1:8000', changeOrigin: false } },
   },
-  preview: { proxy: { '^/api/': { target: 'http://127.0.0.1:8000', changeOrigin: false } } },
+  preview: {
+    port: 5175,
+    host: true,
+    allowedHosts: true,
+    strictPort: true,
+    proxy: { '^/api/': { target: 'http://127.0.0.1:8000', changeOrigin: false } },
+  },
 })

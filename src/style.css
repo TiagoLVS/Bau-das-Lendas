@@ -495,7 +495,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--osso); outline-
   padding: clamp(48px, 8vh, 96px) var(--margem) 48px;
   background:
     radial-gradient(ellipse at 50% 0%, rgba(116, 52, 61, 0.12), transparent 55%),
-    rgba(8, 9, 10, 0.97);
+    #08090a;
   animation: surge 0.55s ease both;
 }
 
@@ -709,3 +709,90 @@ html[data-reduzir='true'] *::after {
   .portal-selo { break-inside: avoid; box-shadow: none; background: white; }
   .portal-qr { background: white; print-color-adjust: exact; }
 }
+
+/* Etapa 06: destinos principais compactos, com Perfil independente. */
+.perfil-acesso { display:inline-flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; color:inherit; font:11px var(--interface,monospace); text-decoration:none; }
+.menu > .menu-movimento { width:44px; height:44px; flex:none; background:transparent; border:0; color:inherit; }
+.menu > .menu-movimento svg { width:24px; height:24px; stroke:currentColor; }
+.inicio-contexto { position:fixed; bottom:max(68px,env(safe-area-inset-bottom)); left:var(--margem); z-index:8; }
+.grimorio-galeria { margin:8px 0; font-size:14px; }
+@media(max-width:640px) { .menu { gap:8px; } .perfil-acesso { font-size:11px; } .menu > .menu-movimento { width:36px; } .inicio-contexto { bottom:max(70px,env(safe-area-inset-bottom)); } }
+@media(max-width:640px) {
+  .menu { flex-wrap:wrap; }
+  .menu .marca { margin-right:auto; }
+  .menu-alternar { order:3; flex-basis:100%; justify-content:center; padding:0; }
+}
+
+/* O acesso à galeria precisa permanecer acima do livro e fora da área flexível. */
+.grimorio-galeria { position:relative; z-index:2; flex-shrink:0; }
+
+/* Etapa 10: a entrada respeita a altura real do menu e dos acessos inferiores. */
+.limiar {
+  top: var(--menu-altura, 92px);
+  bottom: calc(128px + env(safe-area-inset-bottom));
+  padding: 16px var(--margem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  justify-content: safe center;
+  scrollbar-width: thin;
+}
+.limiar > * { flex-shrink: 0; }
+.botao-explorar { min-height: 44px; font-size: 10px; }
+.menu { padding-top: max(16px, env(safe-area-inset-top)); }
+.painel { padding-top: max(48px, env(safe-area-inset-top)); padding-bottom: max(48px, env(safe-area-inset-bottom)); }
+@media (min-width:481px) and (max-width:640px) {
+  .menu { flex-wrap: nowrap; }
+  .menu-alternar { order: 0; flex-basis: auto; padding: 10px 0 10px 14px; }
+}
+@media (max-width:480px) {
+  .menu { display: grid; grid-template-columns: minmax(0,1fr) 44px 44px; column-gap: 8px; }
+  .menu .marca { font-size: 19px; min-width: 0; }
+  .menu > .menu-movimento { width: 44px; }
+  .menu-alternar { grid-column: 1/-1; grid-row: 2; }
+}
+@media (max-height:560px) and (orientation:landscape) {
+  .menu { padding-top: max(8px, env(safe-area-inset-top)); }
+}
+.menu > .menu-movimento { min-width:44px; width:44px; }
+.conta-texto a.botao-discreto { display:inline-flex; align-items:center; }
+/* Os acessos inferiores avançam juntos com o inset, mantendo o intervalo. */
+.inicio-contexto { bottom:calc(68px + env(safe-area-inset-bottom)); }
+.grimorio-botao { bottom:calc(20px + env(safe-area-inset-bottom)); }
+@media (max-width:640px) { .inicio-contexto { bottom:calc(70px + env(safe-area-inset-bottom)); } }
+
+/* Revisão visual: enquanto o Three.js carrega, o limiar já mostra névoa e luz de lanterna. */
+.world3d--carregando {
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 62%, rgba(196, 150, 82, .16), transparent 70%),
+    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(40, 52, 48, .55), transparent 75%),
+    linear-gradient(#07080a, #0d0f10 55%, #050506);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .world3d--carregando { animation: limiar-respira 4.5s ease-in-out infinite; }
+}
+@keyframes limiar-respira { 50% { opacity: .82; } }
+
+/* Revisão visual R2 — Perfil ------------------------------------------------ */
+.conta-boas-vindas { margin: 0 0 22px; }
+.conta-boas-vindas strong { font-weight: 500; color: var(--osso); }
+.conta-texto section[aria-label="Recompensas diárias"] { margin: 0 0 30px; padding: 18px 20px 6px; border: 1px solid #b49a7633;
+  background: linear-gradient(180deg, rgba(116, 52, 61, .12), rgba(8, 9, 10, 0) 70%); font-size: 1rem; }
+.conta-texto section[aria-label="Recompensas diárias"] > p[role="status"] { margin: 0 0 6px; font: 400 21px/1.4 var(--serifa); color: #e1d6c2; }
+.conta-texto section[aria-label="Recompensas diárias"] summary { display: flex; align-items: center; font: 500 11px var(--interface); letter-spacing: .16em; text-transform: uppercase; color: #a99f8c; }
+.conta-acoes { display: grid; margin: 0 0 26px; border-top: 1px solid #ffffff17; }
+.conta-acoes .conta-acao { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 58px; padding: 0 4px;
+  border: 0; border-bottom: 1px solid #ffffff17; background: none; color: var(--osso); text-decoration: none; text-align: left;
+  font: 500 11px var(--interface); letter-spacing: .18em; text-transform: uppercase; cursor: pointer; transition: color .25s, padding .25s, background .25s; }
+.conta-acoes .conta-acao::after { content: '→'; font-size: 15px; letter-spacing: 0; color: #a0605a; transition: transform .25s, color .25s; }
+.conta-acoes .conta-acao:first-child { color: #e2c9a0; }
+.conta-acoes .conta-acao:hover, .conta-acoes .conta-acao:focus-visible { color: #f0e2c8; padding-left: 12px; background: rgba(116, 52, 61, .1); }
+.conta-acoes .conta-acao:hover::after, .conta-acoes .conta-acao:focus-visible::after { transform: translateX(-6px); color: #c0857a; }
+.conta-acoes .conta-acao:focus-visible { outline: 1px solid #b49a76; outline-offset: -1px; }
+.conta-sair { color: #8b8f8e; }
+.conta-texto input { padding: 12px 14px; border: 1px solid #cec8ba2e; background: #ffffff06; }
+.conta-texto input:focus-visible { border-color: #b49a76; outline-offset: 2px; }
+.conta-primario { min-height: 50px; padding: 0 30px; border: 1px solid #a45b61; background: linear-gradient(135deg, #5f262e, #3b151d); color: #f1e8e6; }
+.conta-primario:hover:not(:disabled) { filter: brightness(1.15); }
+.conta-texto section[aria-label="Recompensas diárias"] summary::before { content: '▸'; margin-right: 10px; font-size: 13px; color: #c0857a; transition: transform .2s; }
+.conta-texto section[aria-label="Recompensas diárias"] details[open] > summary::before { transform: rotate(90deg); }
+.conta-texto section[aria-label="Recompensas diárias"] summary::-webkit-details-marker { display: none; }

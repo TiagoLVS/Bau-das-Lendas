@@ -1,5 +1,6 @@
 ﻿import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { lendas } from '../data/lendas'
 import { criarAtmosfera } from './Atmosfera'
 import { criarCatalogo, SEQUENCIA_APRESENTACAO } from './hauntings/EventCatalog'
@@ -379,7 +380,7 @@ export default function World3D({ indiceAtivo, deslocamento, fase, reduzirMovime
     camera.position.set(0, 1.72, Z_VESTIBULO)
     camera.rotation.order = 'YXZ'
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' })
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'default' })
     const limitePixelRatio = window.matchMedia('(max-width: 760px)').matches ? 1.2 : 1.6
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, limitePixelRatio))
     renderer.outputColorSpace = THREE.SRGBColorSpace
@@ -718,6 +719,49 @@ grupo.add(cartao)
     }
 
     const segmentos = Array.from({ length: 11 }, criarSegmento)
+    let arandelasCanceladas = false
+    // Par de arandelas (modelo original Blender: assets/blender/arandela-corredor.blend) ladeando o portal.
+    const chamasPortal: { malha: THREE.Mesh; halo: THREE.Sprite; luz: THREE.PointLight | null; fase: number }[] = []
+    new GLTFLoader().load(`${import.meta.env.BASE_URL}models/arandela-corredor.glb`, gltf => {
+      if (arandelasCanceladas) return
+      const modelo = gltf.scene
+      modelo.traverse(o => {
+        const malha = o as THREE.Mesh
+        if (!malha.isMesh) return
+        guardar(malha.geometry)
+        const m = guardar(malha.material as THREE.MeshStandardMaterial)
+        if (m.transparent) { m.depthWrite = false; m.side = THREE.DoubleSide }
+        malha.renderOrder = m.transparent ? 2 : 0
+      })
+      const economico = window.matchMedia('(max-width: 760px), (pointer: coarse)').matches
+      const { canvas: halo, ctx } = criarCanvas(64, 64)
+      const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32)
+      grad.addColorStop(0, 'rgba(255,196,120,0.95)'); grad.addColorStop(0.25, 'rgba(255,140,60,0.35)'); grad.addColorStop(1, 'rgba(255,120,40,0)')
+      ctx.fillStyle = grad; ctx.fillRect(0, 0, 64, 64)
+      const haloMat = guardar(new THREE.SpriteMaterial({ map: guardar(new THREE.CanvasTexture(halo)), blending: THREE.AdditiveBlending, depthWrite: false, fog: false, transparent: true }))
+      for (const lado of [-1, 1]) {
+        const peca = modelo.clone(true)
+        peca.scale.setScalar(4.2)
+        peca.position.set(lado * 4.05, 0.5, Z_PORTAL + 0.56)
+        const malha = peca.getObjectByName('Chama') as THREE.Mesh
+        const material = guardar(((malha.material as THREE.MeshStandardMaterial).clone()))
+        material.fog = false
+        malha.material = material
+        let luz: THREE.PointLight | null = null
+        if (!economico) {
+          luz = new THREE.PointLight(0xffa860, 2.6, 6.5, 2)
+          luz.position.set(0, 0.2, 0.32)
+          peca.add(luz)
+        }
+        const brilho = new THREE.Sprite(haloMat)
+        brilho.position.set(0, 0.195, 0.2)
+        brilho.scale.setScalar(0.22)
+        brilho.renderOrder = 3
+        peca.add(brilho)
+        chamasPortal.push({ malha, halo: brilho, luz, fase: lado > 0 ? 1.9 : 0 })
+        scene.add(peca)
+      }
+    }, undefined, () => { /* sem arandelas: o corredor permanece como antes */ })
     const atribuirSegmento = (segmento: Segmento, indice: number) => {
       if (segmento.indice === indice) return
       segmento.indice = indice
@@ -749,6 +793,7 @@ grupo.add(cartao)
       segmento.quarto.visible = false
       segmento.banheiro.visible = false
       segmento.luz.intensity = indice >= 0 && indice < lendas.length ? 1.25 : 0
+      segmento.luz.visible = segmento.luz.intensity > 0
     }
 
     const queryAtmosfera = new URLSearchParams(window.location.search)
@@ -841,7 +886,13 @@ grupo.add(cartao)
     let tempo = 0
     let anguloPorta = 0
     let primeiroQuadro = true
+    // No limiar a câmera é fixa: 30 quadros/s bastam para chama, névoa e partículas.
+    // O quadro é pulado antes de ler o relógio, então o tempo das animações não muda.
+    let ultimoDesenho = 0
     renderer.setAnimationLoop(() => {
+      const agoraQuadro = performance.now()
+      if (estado.current.fase !== 'travessia' && !primeiroQuadro && agoraQuadro - ultimoDesenho < 31) return
+      ultimoDesenho = agoraQuadro
       const tempoQuadro = clock.getDelta()
       const delta = Math.min(tempoQuadro, 0.05)
       // A coleção cobre a cena. Libere a GPU para o papel, mantendo posição e recursos.
@@ -929,7 +980,16 @@ grupo.add(cartao)
           ? 0.35 + Math.max(0, Math.sin(tempo * 24)) * 0.65
           : 1
         segmento.luz.intensity = acender * 1.55 * vacilo
+        // Luz apagada não ilumina nada, mas ainda custava em todo pixel: fica fora do cálculo.
+        segmento.luz.visible = segmento.luz.intensity > 0
       })
+      for (const chama of chamasPortal) {
+        const tremor = reduzir ? 1 : 0.86 + Math.sin(tempo * 9.3 + chama.fase) * 0.08 + Math.sin(tempo * 23.1 + chama.fase * 3) * 0.06
+        ;(chama.malha.material as THREE.MeshStandardMaterial).emissiveIntensity = 5 * tremor
+        chama.malha.scale.set(1, tremor, 1)
+        chama.halo.scale.setScalar(0.22 * (0.9 + tremor * 0.12))
+        if (chama.luz) chama.luz.intensity = 2.6 * tremor
+      }
 
       atmosfera.atualizar(delta, reduzir, tempoQuadro)
 
@@ -937,6 +997,7 @@ grupo.add(cartao)
     })
 
     return () => {
+      arandelasCanceladas = true
       renderer.setAnimationLoop(null)
       if (depuracao.__bauAtmosfera?.inspecionar === diagnostico) delete depuracao.__bauAtmosfera
       window.removeEventListener('pointerup',aoInspecionar)

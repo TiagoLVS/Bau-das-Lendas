@@ -2,6 +2,8 @@
    MAIN — liga tudo: limiar, mouse, scroll, ficha, planta,
    dossiê, relógio e som.
    ========================================================= */
+import { iniciarManifestacoes } from './manifestacoes.js';
+import { containDialogFocus } from '../../dialog-focus.js';
 import { api } from '../../api.js';
 import { collection } from './colecao.js';
 import { mountCard } from './card-view.js';
@@ -9,29 +11,50 @@ import { houseCatalog } from './house-catalog.js';
 import { exhibitCards } from '../../card-art.js';
 
 const decorations = Bau.lendas;
+let leaving = false;
+let initializing = true;
+const leave = () => { leaving = true; };
+// WebKit pode rejeitar o fetch antes de emitir pagehide durante o retorno.
+window.addEventListener('beforeunload', leave, { once: true });
+window.addEventListener('pagehide', leave, { once: true });
+// Uma entrada restaurada antes de concluir o catálogo precisa reiniciar a carga.
+window.addEventListener('pageshow', event => {
+  if (event.persisted && leaving && initializing) window.location.reload();
+});
 try {
   let catalog;
   try { catalog = await api('/legends'); }
   catch {
     // O catálogo público é curatorial. Não substitui a coleção autenticada.
-    const response = await fetch('/lendas-ra.json');
-    if (!response.ok) throw Error('Catálogo indisponível.');
-    catalog = await response.json();
+    if (!leaving) {
+      const response = await fetch('/lendas-ra.json');
+      if (!response.ok) throw Error('Catálogo indisponível.');
+      catalog = await response.json();
+    }
   }
-  Bau.lendas = houseCatalog(catalog, decorations);
-  Bau.exposicao = exhibitCards.map(extra => ({ ...decorations.find(l => l.id === extra.id), ...extra }));
+  if (!leaving) {
+    Bau.lendas = houseCatalog(catalog, decorations);
+    Bau.exposicao = exhibitCards.map(extra => ({ ...decorations.find(l => l.id === extra.id), ...extra }));
+  }
 } catch {
-  document.getElementById('dica').textContent = 'Não foi possível carregar as lendas oficiais. Atualize a página.';
-  throw Error('Catálogo oficial indisponível.');
+  if (!leaving) {
+    const message = 'Não foi possível carregar as lendas oficiais. Atualize a página.';
+    document.getElementById('dica').textContent = message;
+    const notice = document.querySelector('#limiar-texto .j-legenda');
+    notice.textContent = message;
+    notice.setAttribute('role', 'alert');
+    document.getElementById('btn-entrar').disabled = true;
+    throw Error('Catálogo oficial indisponível.');
+  }
 }
 
-(function () {
+if (!leaving) (function () {
   const $ = (id) => document.getElementById(id);
   const L = Bau.lendas;
   const C = Bau.corredor;
   const body = document.body;
   const vistos = new Set();
-  document.addEventListener('error', function (event) {
+  Bau.ciclo.ouvir(document, 'error', function (event) {
     if (!event.target.matches?.('.carta-arte-ilustrada')) return;
     const text = document.createElement('span'); text.className = 'abs carta-lacrada';
     text.textContent = 'IMAGEM INDISPONÍVEL'; event.target.replaceWith(text);
@@ -43,7 +66,7 @@ try {
     vistos.add(i);
     const ficha = $('ficha');
     ficha.classList.add('trocando');
-    setTimeout(function () {
+    Bau.ciclo.depois(function () {
       $('ficha-num').textContent = `REGISTRO ${l.num} / ${Bau.TOTAL_REGISTROS}`;
       $('ficha-local').textContent = l.local;
       $('ficha-nome').textContent = l.nome;
@@ -59,10 +82,13 @@ try {
   // O scroll anda direto: atravessa o jardim, a porta abre sozinha
   // quando você chega perto e você entra no corredor sem parar.
   function saiuDoPortao(longe) {
+    $('limiar').inert = longe || body.classList.contains('dentro');
     body.classList.toggle('abrindo', longe);           // o texto da entrada some
-    if (longe && !Bau.som.ligado) alternarSom(true);
+
   }
   function entrouNaCasa(dentro) {
+    $('ficha').inert = !dentro;
+    $('limiar').inert = dentro || body.classList.contains('abrindo');
     body.classList.toggle('dentro', dentro);           // painel da lenda, planta etc.
     $('nav-corredor').classList.toggle('ativo', dentro);
     $('dica').textContent = dentro ? 'MOVA O MOUSE PARA OLHAR · ROLE PARA CAMINHAR' : 'MOVA O MOUSE PARA OLHAR · ROLE PARA ATRAVESSAR O JARDIM';
@@ -84,7 +110,7 @@ try {
   $('marca').addEventListener('click', function (ev) { ev.preventDefault(); voltarAoPortao(); });
 
   /* ---------- mouse: olhar + lanterna ---------- */
-  window.addEventListener('pointermove', function (ev) {
+  Bau.ciclo.ouvir(window, 'pointermove', function (ev) {
     const nx = (ev.clientX / window.innerWidth) * 2 - 1;
     const ny = (ev.clientY / window.innerHeight) * 2 - 1;
     C.olhar(nx, ny);
@@ -94,7 +120,7 @@ try {
     body.style.setProperty('--my', ev.clientY + 'px');
   });
   // no celular: girar o aparelho também olha em volta
-  window.addEventListener('deviceorientation', function (ev) {
+  Bau.ciclo.ouvir(window, 'deviceorientation', function (ev) {
     if (ev.gamma == null) return;
     C.olhar(Math.max(-1, Math.min(1, ev.gamma / 30)), Math.max(-1, Math.min(1, (ev.beta - 60) / 30)));
   });
@@ -102,8 +128,8 @@ try {
   /* ---------- caminhar: roda do mouse, teclado, toque ---------- */
   // roda do mouse: anda direto (sem travar), mais rápido no jardim
   const RODA_FORA = 3.2, RODA_DENTRO = 2.2;
-  window.addEventListener('wheel', function (ev) {
-    if (!$('dossie').hidden) return;
+  Bau.ciclo.ouvir(window, 'wheel', function (ev) {
+    if (!$('dossie').hidden || ev.target.closest?.('#limiar-texto,#ficha,#planta,a,button,input,textarea,select,summary')) return;
     let d = ev.deltaY * (ev.deltaMode === 1 ? 40 : 1);  // alguns mouses mandam "linhas"
     d = Math.max(-160, Math.min(160, d));
     C.andar(d * (C.estado.dentro ? RODA_DENTRO : RODA_FORA));
@@ -118,8 +144,9 @@ try {
     Bau.eggs.garra();
   }
 
-  window.addEventListener('keydown', function (ev) {
+  Bau.ciclo.ouvir(window, 'keydown', function (ev) {
     if (!$('dossie').hidden) { if (ev.key === 'Escape') fecharDossie(); return; }
+    if (ev.target.closest?.('a,button,input,textarea,select,summary,[role=button]')) return;
     if (['ArrowDown', 'ArrowRight', 'PageDown'].includes(ev.key)) { ev.preventDefault(); passo(1); }
     if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(ev.key)) { ev.preventDefault(); passo(-1); }
     // atalhos de apresentação: a s d f g h j k l ç
@@ -134,13 +161,15 @@ try {
   });
 
   let toqueY = null;
-  window.addEventListener('touchstart', (ev) => { toqueY = ev.touches[0].clientY; }, { passive: true });
-  window.addEventListener('touchend', function (ev) {
-    if (toqueY === null || !$('dossie').hidden) return;
+  Bau.ciclo.ouvir(window, 'touchstart', (ev) => { toqueY = ev.touches.length === 1 && !ev.target.closest?.('#limiar-texto,#ficha,#planta,a,button,input,textarea,select,summary,[role=dialog]') ? ev.touches[0].clientY : null; }, { passive: true });
+  Bau.ciclo.ouvir(window, 'touchend', function (ev) {
+    if (toqueY === null || !$('dossie').hidden) { toqueY=null; return; }
     const dy = toqueY - ev.changedTouches[0].clientY;
     if (Math.abs(dy) > 30) C.andar(dy * (C.estado.dentro ? 3 : 5));
     toqueY = null;
   }, { passive: true });
+
+  Bau.ciclo.ouvir(window, 'touchcancel',()=>{toqueY=null;},{passive:true});
 
   $('btn-prox').addEventListener('click', () => C.irPara(C.estado.i + 1));
   $('btn-ant').addEventListener('click', () => C.irPara(C.estado.i - 1));
@@ -148,6 +177,10 @@ try {
 
   /* ---------- dossiê ---------- */
   let dossieAtual = 0;
+  let releaseDossierFocus = null;
+  function focusDossier() {
+    if(!releaseDossierFocus)releaseDossierFocus=containDialogFocus($('dossie'),{onEscape:fecharDossie,initialFocus:$('btn-fechar'),restoreFocus:false});
+  }
   function abrirDossie(i) {
     const l = L[i];
     dossieAtual = i;
@@ -170,11 +203,15 @@ try {
     $('btn-grimorio').textContent = noGrimorio(l.id) ? 'ABRIR MEU GRIMÓRIO' : 'DESCOBRIR NO BAÚ EM RA';
     document.querySelector('.dossie-surpresa').textContent = collection.error || (noGrimorio(l.id) ? 'Carta salva na sua conta. Clique na ilustração para virar.' : 'Descubra esta carta no baú em RA para adicioná-la à sua conta.');
     $('dossie').hidden = false;
+    body.classList.add('dossie-aberto');
     $('dossie').scrollTop = 0;
+    focusDossier();
     $('btn-fechar').focus();
   }
   function fecharDossie() {
+    releaseDossierFocus?.();releaseDossierFocus=null;
     $('dossie').hidden = true;
+    body.classList.remove('dossie-aberto');
     $('btn-dossie').focus();
   }
   Bau.abrirDossie = abrirDossie;
@@ -205,7 +242,7 @@ try {
     $('dossie-fonte').textContent = l.fonte || '';
     document.querySelector('.dossie-surpresa').textContent = 'Saci Pererê é uma carta de exposição. Não integra o progresso das 60 lendas.';
     $('btn-grimorio').textContent = 'ABRIR MEU GRIMÓRIO';
-    $('dossie').hidden = false; $('dossie').scrollTop = 0; $('btn-fechar').focus();
+    $('dossie').hidden = false; body.classList.add('dossie-aberto'); $('dossie').scrollTop = 0; focusDossier(); $('btn-fechar').focus();
   };
   collection.addEventListener('change', function () {
     C.atualizarColecao();
@@ -220,13 +257,33 @@ try {
   });
 
   /* ---------- som ---------- */
+  let preferirSilencio = false;
+  try { preferirSilencio = localStorage.getItem('bau-das-lendas-som') === 'false'; } catch {}
   function alternarSom(forcar) {
     const ligar = typeof forcar === 'boolean' ? forcar : !Bau.som.ligado;
+    if (forcar === true && preferirSilencio) return;
+    if (typeof forcar !== 'boolean') {
+      preferirSilencio = !ligar;
+      try { localStorage.setItem('bau-das-lendas-som', String(ligar)); } catch {}
+    }
     if (ligar) Bau.som.ligar(); else Bau.som.desligar();
     $('btn-som').setAttribute('aria-pressed', String(ligar));
     $('btn-som').textContent = 'SOM: ' + (ligar ? 'LIGADO' : 'DESLIGADO');
   }
   $('btn-som').addEventListener('click', () => alternarSom());
+  const movimento = $('btn-movimento');
+  function atualizarMovimento() {
+    const reduzido = Bau.ciclo.reduzir();
+    movimento.setAttribute('aria-pressed', String(reduzido));
+    movimento.setAttribute('aria-label', 'Movimento reduzido: ' + (reduzido ? 'sim' : 'não'));
+  }
+  movimento.addEventListener('click', () => {
+    const valor = !Bau.ciclo.reduzir();
+    document.documentElement.dataset.reduzir = String(valor);
+    try { localStorage.setItem('bau-das-lendas-movimento-reduzido', String(valor)); } catch {}
+    atualizarMovimento();
+  });
+  atualizarMovimento();
 
   /* ---------- relógios ---------- */
   function relogios() {
@@ -243,7 +300,7 @@ try {
     }
   }
   relogios();
-  setInterval(relogios, 1000);
+  Bau.ciclo.repetir(relogios, 1000);
 
   /* ---------- modo projetor: ?brilho=1.5 na URL ajusta a claridade ---------- */
   const brilho = new URLSearchParams(location.search).get('brilho');
@@ -257,8 +314,11 @@ try {
 
   /* ---------- começar ---------- */
   C.iniciar(L, atualizarFicha, { dentro: entrouNaCasa, saiu: saiuDoPortao });
+  Bau.manifestacoes = iniciarManifestacoes(Bau);
   entrouNaCasa(false);
   Bau.planta.montar();
   Bau.eggs.iniciar();
   Bau.aparicoes.iniciar();
+  initializing = false;
+  window.removeEventListener('beforeunload', leave);
 })();

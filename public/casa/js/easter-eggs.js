@@ -9,7 +9,7 @@ window.Bau = window.Bau || {};
 Bau.eggs = (function () {
   const camada = document.getElementById('camada-eggs');
   const params = new URLSearchParams(location.search);
-  const reduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduzido = () => Bau.ciclo.reduzir();
   let ultimoMovimento = performance.now();
   let hachiAtiva = null;
 
@@ -17,8 +17,8 @@ Bau.eggs = (function () {
     const a = document.getElementById('aviso');
     a.textContent = txt;
     a.classList.add('ver');
-    clearTimeout(aviso._t);
-    aviso._t = setTimeout(() => a.classList.remove('ver'), ms || 3200);
+    Bau.ciclo.cancelar(aviso._t);
+    aviso._t = Bau.ciclo.depois(() => a.classList.remove('ver'), ms || 3200);
   }
 
   /* ---------- 1. Chapeuzinho… e depois o lobo ---------- */
@@ -28,10 +28,10 @@ Bau.eggs = (function () {
     const caixa = C.adicionar('div', '', `left:0;top:${900 - h}px;width:1440px;height:${h}px;transform:translateZ(-${prof}px)`);
     const anda = C.adicionar('div', '', `left:0;bottom:0;animation:atravessar 9s linear ${atraso}s both`, caixa);
     anda.innerHTML = `<svg class="balanco" width="${w}" height="${h}" viewBox="${viewBox}"><use href="#${simbolo}"/></svg>`;
-    setTimeout(() => caixa.remove(), (9 + atraso) * 1000 + 200);
+    Bau.ciclo.depois(() => caixa.remove(), (9 + atraso) * 1000 + 200);
   }
   function chapeuzinho() {
-    if (!Bau.corredor.estado.dentro || reduzido || document.hidden) return;
+    if (!Bau.corredor.estado.dentro || reduzido() || document.hidden) return;
     atravessar('svg-chapeuzinho', 80, 140, '0 0 30 52', 0);
     atravessar('svg-lobo', 210, 126, '0 0 100 60', 4.5);
   }
@@ -47,7 +47,7 @@ Bau.eggs = (function () {
   let uivou = false;
   function garra() {
     // na lua cheia, rolar pelo corredor deixa marcas de unha nas paredes
-    if (!luaCheia || reduzido || Math.random() < 0.5) return;
+    if (!luaCheia || reduzido() || Math.random() < 0.5) return;
     Bau.aparicoes.riscos();
   }
 
@@ -55,7 +55,7 @@ Bau.eggs = (function () {
   let ultX = null, ultY = null, acum = 0;
   function curupira(x, y) {
     const C = Bau.corredor.estado;
-    if (!C.dentro || C.i !== 0 || reduzido) { ultX = null; return; }
+    if (!C.dentro || C.i !== 0 || reduzido()) { ultX = null; return; }
     if (ultX === null) { ultX = x; ultY = y; return; }
     const dx = x - ultX, dy = y - ultY;
     acum += Math.hypot(dx, dy);
@@ -70,7 +70,7 @@ Bau.eggs = (function () {
     p.style.left = (x - 9) + 'px'; p.style.top = (y - 17) + 'px';
     p.style.transform = `rotate(${ang}deg)`;
     camada.appendChild(p);
-    setTimeout(() => p.remove(), 2700);
+    Bau.ciclo.depois(() => p.remove(), 2700);
     ultX = x; ultY = y;
   }
 
@@ -84,13 +84,13 @@ Bau.eggs = (function () {
     Bau.som.popopo();
     const k = C.kit, inicio = Math.min(C.estado.camZ + 1400, C.D - 300);
     for (let i = 0; i < 6; i++) {
-      setTimeout(function () {
+      Bau.ciclo.depois(function () {
         k.criar('div', 'marca-plano surgindo', `left:${i % 2 ? 470 : 380}px;top:${k.noChao(inicio - i * 170, 190)}px;transform:rotate(180deg)`, k.chao,
           Bau.gore.pe({ esquerdo: i % 2 === 0, larg: 80, op: 0.75 }));
         if (i % 2) Bau.som.passoTeto();
       }, i * 700);
     }
-    setTimeout(() => { hachiAtiva = null; }, 40000);
+    Bau.ciclo.depois(() => { hachiAtiva = null; }, 40000);
   }
   function espantarHachi() {}
 
@@ -113,7 +113,7 @@ Bau.eggs = (function () {
     r.innerHTML = '<svg viewBox="0 0 90 124" width="100%" height="100%"><ellipse cx="45" cy="60" rx="22" ry="30" fill="#c8bba2" fill-opacity=".55"/><path d="M23 50 C20 90 24 110 18 124 M67 50 C70 90 66 110 72 124" stroke="#d9c88a" stroke-width="5" fill="none"/><ellipse cx="37" cy="56" rx="3" ry="4" fill="#0b0a09"/><ellipse cx="53" cy="56" rx="3" ry="4" fill="#0b0a09"/><path d="M38 78 q7 3 14 0" stroke="#0b0a09" stroke-width="1.5" fill="none"/><path d="M40 66 v6 M50 66 v6" stroke="#fff" stroke-width="2"/></svg>';
     document.body.appendChild(r);
     Bau.som.sussurro();
-    setTimeout(() => r.remove(), 1700);
+    Bau.ciclo.depois(() => r.remove(), 1700);
   }
 
   /* ---------- 6. Saci (clique no gorro vermelho) ---------- */
@@ -124,10 +124,10 @@ Bau.eggs = (function () {
     w.innerHTML = '<path d="M35 35 m-6 0 a6 6 0 1 1 12 0 a12 12 0 1 1 -24 0 a18 18 0 1 1 36 0 a24 24 0 1 1 -48 0" stroke="#b8af9f" stroke-width="1.5" fill="none"/>';
     w.style.left = ev.clientX + 'px'; w.style.top = ev.clientY + 'px';
     camada.appendChild(w);
-    setTimeout(() => w.remove(), 2100);
+    Bau.ciclo.depois(() => w.remove(), 2100);
     Bau.som.vento();
-    if (!reduzido) Bau.corredor.girar();
-    setTimeout(() => aviso('O SACI PASSOU POR AQUI.'), 900);
+    if (!reduzido()) Bau.corredor.girar();
+    Bau.ciclo.depois(() => aviso('O SACI PASSOU POR AQUI.'), 900);
   }
 
   /* ---------- 7. Hora morta (3h–3h59) ---------- */
@@ -143,7 +143,7 @@ Bau.eggs = (function () {
 
   /* ---------- extras ---------- */
   const tituloOriginal = document.title;
-  document.addEventListener('visibilitychange', function () {
+  Bau.ciclo.ouvir(document, 'visibilitychange', function () {
     document.title = document.hidden ? 'volta… a gente ainda tá aqui' : tituloOriginal;
   });
 
@@ -154,20 +154,20 @@ Bau.eggs = (function () {
     }
     if (horaMorta) document.body.classList.add('hora-morta');
 
-    window.addEventListener('pointermove', function (ev) {
+    Bau.ciclo.ouvir(window, 'pointermove', function (ev) {
       ultimoMovimento = performance.now();
       espantarHachi();
       curupira(ev.clientX, ev.clientY);
     });
-    window.addEventListener('wheel', function () { ultimoMovimento = performance.now(); espantarHachi(); }, { passive: true });
-    window.addEventListener('keydown', tecla);
-    window.addEventListener('pointerdown', function () {
-      if (luaCheia && !uivou && Bau.som.ligado && Bau.corredor.estado.dentro) { uivou = true; setTimeout(Bau.som.uivo, 600); }
+    Bau.ciclo.ouvir(window, 'wheel', function () { ultimoMovimento = performance.now(); espantarHachi(); }, { passive: true });
+    Bau.ciclo.ouvir(window, 'keydown', tecla);
+    Bau.ciclo.ouvir(window, 'pointerdown', function () {
+      if (luaCheia && !uivou && Bau.som.ligado && Bau.corredor.estado.dentro) { uivou = true; Bau.ciclo.depois(Bau.som.uivo, 600); }
     });
 
-    setInterval(chapeuzinho, 24000);
-    setTimeout(chapeuzinho, 7000);
-    setInterval(hachishakusama, 2000);
+    Bau.ciclo.repetir(chapeuzinho, 24000);
+    Bau.ciclo.depois(chapeuzinho, 7000);
+    Bau.ciclo.repetir(hachishakusama, 2000);
 
     console.log('%cBaú das Lendas', 'font: 28px Georgia; color: #d9a24a');
     console.log('%cVocê abriu o console. A casa percebeu.\nTente digitar \"loira\" três vezes fora daqui.', 'font: 12px monospace; color: #b8af9f');

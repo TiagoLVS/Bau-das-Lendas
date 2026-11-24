@@ -2,11 +2,12 @@ import * as THREE from 'three';
 import { estimateQrPose, isRitualQr } from '/qr-pose.js';
 
 // Detector do próprio QR 02. Não usa imagem MIND, plano invisível ou alvo extra.
-// A pose é estimada dos quatro cantos; validação física está descrita em docs/VALIDACAO-VISUAL.md.
+// A pose é estimada dos quatro cantos; limites e validação: docs/ETAPA-09-RA-RASTREAMENTO.md.
 export class QRTrackerThree {
-  constructor({ container, decoder = globalThis.jsQR }) {
+  constructor({ container, decoder = globalThis.jsQR, frameTimeout = 15000 }) {
     if (typeof decoder !== 'function') throw Error('O leitor de QR não carregou. Recarregue a página.');
     this.container = container; this.decoder = decoder;
+    this.frameTimeout = frameTimeout; this.trackListeners = [];
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(60, 1, .01, 150);
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -21,6 +22,7 @@ export class QRTrackerThree {
     this.anchor = { group: new THREE.Group(), onTargetFound: null, onTargetLost: null };
     this.anchor.group.visible = false; this.scene.add(this.anchor.group);
     container.append(this.video, this.renderer.domElement);
+    this.disposed=false;this.generation=0;
     this.found = false; this.hits = 0; this.lastScan = 0; this.lastFound = 0;
     this.resize = () => {
       const { width, height } = container.getBoundingClientRect();
@@ -33,8 +35,14 @@ export class QRTrackerThree {
     };
     this.onVisibility = () => {
       if (document.hidden) { this.loseTarget(); this.video.pause(); }
-      else if (this.running) this.video.play().catch(() => this.stop());
+      else if (this.running) {
+        this.lastVideoAt = null;
+        this.video.play().catch(() => this.failCamera(new DOMException('Não foi possível retomar o vídeo.','NotReadableError')));
+      }
     };
+    this.video.addEventListener?.('resize',this.resize);
+    this.videoError=()=>{if(this.running)this.failCamera(new DOMException('O vídeo da câmera foi interrompido.','NotReadableError'))};
+    this.video.addEventListener?.('error',this.videoError);
     window.addEventListener('resize', this.resize);
     document.addEventListener('visibilitychange', this.onVisibility);
     this.resize();
@@ -43,20 +51,50 @@ export class QRTrackerThree {
   addAnchor() { return this.anchor; }
 
   async start() {
+    if(this.disposed)throw new DOMException("Experiência encerrada.","AbortError");
+    if(this.starting)return this.starting;
+    this.starting=this.startCamera();
+    try{return await this.starting}finally{this.starting=null}
+  }
+
+  async startCamera() {
+    const generation=this.generation;
     if (this.running) return;
-    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia)
-      throw Error('Abra o site por HTTPS em um navegador com acesso à câmera.');
+    if (!window.isSecureContext)
+      throw new DOMException('Abra o site por HTTPS para acessar a câmera.','SecurityError');
+    if (!navigator.mediaDevices?.getUserMedia)
+      throw new DOMException('Este navegador não oferece acesso à câmera.','NotSupportedError');
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({ audio: false,
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: false,
         video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } } });
-      this.video.srcObject = this.stream;
-      await this.video.play();
+      if(this.disposed||generation!==this.generation){stream.getTracks().forEach(t=>t.stop());throw new DOMException('Experiência encerrada.','AbortError')}
+      this.stream=stream;this.video.srcObject = stream;
+      for (const track of stream.getVideoTracks?.() || stream.getTracks()) {
+        const ended = () => this.failCamera(new DOMException('A câmera foi interrompida. Tente novamente.','NotReadableError'));
+        track.addEventListener?.('ended',ended,{once:true});
+        this.trackListeners.push([track,ended]);
+      }
+      await this.waitForVideo();
+      if(this.disposed||generation!==this.generation)throw new DOMException('Experiência encerrada.','AbortError');
       this.resize(); this.running = true;
       const scan = now => {
         if (!this.running) return;
-        if (!document.hidden && this.video.readyState >= 2 && now-this.lastScan >= 100) {
-          this.lastScan = now;
-          try { this.scanFrame(now); } catch { this.loseTarget(); }
+        if (!document.hidden) {
+          const time = this.video.currentTime;
+          if (this.lastVideoAt == null || time !== this.lastVideoTime) {
+            this.lastVideoAt = now; this.lastVideoTime = time;
+          }
+          const age = now-this.lastVideoAt;
+          if (this.video.readyState < 2 || age > 350) this.loseTarget();
+          if (age > 2000) {
+            this.failCamera(new DOMException('A câmera não está fornecendo quadros. Tente novamente.','CameraFramesError'));
+            return;
+          }
+          if (this.video.readyState >= 2 && now-this.lastScan >= 100 && age <= 350 &&
+              (!Number.isFinite(time) || time !== this.lastDecodedTime)) {
+            this.lastScan = now; this.lastDecodedTime = time;
+            try { this.scanFrame(now); } catch { this.loseTarget(); }
+          }
         }
         this.frame = requestAnimationFrame(scan);
       };
@@ -64,11 +102,40 @@ export class QRTrackerThree {
     } catch (error) { this.stop(); throw error; }
   }
 
+  waitForVideo() {
+    return new Promise((resolve,reject) => {
+      let played = false, done = false;
+      const events = ['loadeddata','canplay','playing','resize'];
+      const finish = error => {
+        if (done) return;
+        done = true; clearTimeout(timer);
+        events.forEach(e => this.video.removeEventListener?.(e,check));
+        this.video.removeEventListener?.('error',bad);
+        this.cancelVideoWait = null;
+        error ? reject(error) : resolve();
+      };
+      const check = () => {
+        if (played && this.video.readyState >= 2 && this.video.videoWidth > 0 && this.video.videoHeight > 0) finish();
+      };
+      const bad = () => finish(new DOMException('Falha no vídeo da câmera.','NotReadableError'));
+      const timer = setTimeout(() => finish(new DOMException('A câmera não forneceu quadros. Tente novamente.','CameraFramesError')),this.frameTimeout);
+      this.cancelVideoWait = finish;
+      events.forEach(e => this.video.addEventListener?.(e,check));
+      this.video.addEventListener?.('error',bad);
+      Promise.resolve().then(() => this.video.play()).then(() => { played = true; check(); },finish);
+    });
+  }
+
+  failCamera(error) {
+    if (this.disposed) return;
+    this.stop(); this.onError?.(error);
+  }
+
   scanFrame(now) {
     const video = this.video;
     const factor = Math.min(1, 720 / Math.max(video.videoWidth, video.videoHeight));
     const width = Math.round(video.videoWidth*factor), height = Math.round(video.videoHeight*factor);
-    if (!width || !height) return;
+    if (!width || !height) {this.loseTarget();return}
     if (this.canvas.width !== width || this.canvas.height !== height) { this.canvas.width = width; this.canvas.height = height; }
     this.context.drawImage(video,0,0,width,height);
     const pixels = this.context.getImageData(0,0,width,height);
@@ -76,7 +143,7 @@ export class QRTrackerThree {
     let pose = null;
     if (result && isRitualQr(result.data, window.location.origin)) {
       const l = result.location;
-      pose = estimateQrPose([l.topLeftCorner,l.topRightCorner,l.bottomRightCorner,l.bottomLeftCorner],width,height);
+      if(l)pose = estimateQrPose([l.topLeftCorner,l.topRightCorner,l.bottomRightCorner,l.bottomLeftCorner],width,height);
     }
     if (pose) {
       const matrix = new THREE.Matrix4().fromArray(pose);
@@ -84,7 +151,11 @@ export class QRTrackerThree {
       matrix.decompose(position,rotation,scale);
       const group = this.anchor.group;
       if (!this.found) { group.position.copy(position); group.quaternion.copy(rotation); }
-      else { group.position.lerp(position,.55); group.quaternion.slerp(rotation,.55); }
+      else {
+        // Mantém 0,55 a cada 100 ms e a mesma resposta com FPS variável.
+        const alpha = 1-Math.pow(.45,Math.max(0,now-this.lastFound)/100);
+        group.position.lerp(position,alpha); group.quaternion.slerp(rotation,alpha);
+      }
       this.lastFound = now; this.hits++;
       if (this.hits >= 2 && !this.found) {
         this.found = true; group.visible = true; this.anchor.onTargetFound?.();
@@ -101,13 +172,21 @@ export class QRTrackerThree {
   }
 
   stop() {
+    this.generation++;
+    this.cancelVideoWait?.(new DOMException('Experiência interrompida.','AbortError'));
+    this.lastVideoAt = null; this.lastDecodedTime = null;
+    for (const [track,fn] of this.trackListeners) track.removeEventListener?.('ended',fn);
+    this.trackListeners = [];
     this.running = false; cancelAnimationFrame(this.frame);
+    this.video.pause();
     this.stream?.getTracks().forEach(track => track.stop());
-    this.video.srcObject = null; this.loseTarget();
+    this.stream=null;this.video.srcObject = null; this.loseTarget();
   }
 
   dispose() {
+    if(this.disposed)return;this.disposed=true;
     this.stop(); this.renderer.setAnimationLoop(null);
+    this.video.removeEventListener?.('resize',this.resize);this.video.removeEventListener?.('error',this.videoError);
     window.removeEventListener('resize',this.resize);
     document.removeEventListener('visibilitychange',this.onVisibility);
     this.scene.traverse(object => {

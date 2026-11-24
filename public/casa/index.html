@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/estilo.css">
+  <link rel="stylesheet" href="css/arte.css">
 </head>
 <body>
 
@@ -28,6 +29,7 @@
       <p class="j-legenda">Uma menina de capuz vermelho acabou de atravessar o jardim. Algo foi atrás dela.</p>
       <p class="relogio" id="relogio-meianoite">Esta casa guardou sessenta.</p>
       <div class="acoes">
+        <a href="#" id="nav-corredor" class="j-link">Entrar direto na casa</a>
         <button type="button" id="btn-entrar" class="j-botao">SEGUIR AS PEGADAS
           <svg aria-hidden="true" width="18" height="10" viewBox="0 0 18 10"><path d="M0 5h16M12 1l4 4-4 4" stroke="currentColor" fill="none" stroke-width="1.2"/></svg>
         </button>
@@ -38,25 +40,25 @@
 
   <!-- ============ EFEITOS DE TELA ============ -->
   <div id="lanterna" aria-hidden="true"></div>
+  <div id="luar" aria-hidden="true"></div>
+  <div id="bruma" aria-hidden="true"><i></i><i></i></div>
   <div id="vinheta" aria-hidden="true"></div>
-  <svg id="grao" aria-hidden="true"><filter id="f-grao"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#f-grao)"/></svg>
+  <div id="grao" aria-hidden="true"></div>
   <div id="camada-eggs" aria-hidden="true"></div>
 
   <!-- ============ HUD ============ -->
   <header id="topo">
     <a href="#" id="marca">Baú das Lendas</a>
     <nav aria-label="Principal">
-      <a href="#" id="nav-corredor">Explorar</a>
-      <a href="/?lendas=1" data-rota="lendas">Lendas</a>
-      <a href="/?album=1" data-rota="grimorio">Grimório</a>
-      <a href="/casa/cartas.html" data-rota="cartas">Cartas</a>
-      <a href="/?portais=1" data-rota="portais">Portais</a>
-      <a href="/?conta=1" data-rota="conta">Minha conta</a>
-      <a href="/ra.html" data-rota="ra" class="nav-ra">Invocar em RA</a>
+      <a href="/" aria-current="page">Início</a>
+      <a href="/?portais=1">Explorar</a>
+      <a href="/?album=1">Álbum</a>
     </nav>
+    <button type="button" id="btn-movimento" aria-pressed="false" aria-label="Reduzir movimento" title="Reduzir movimento">≈</button>
+    <a class="perfil-acesso" href="/?conta=1">Perfil</a>
   </header>
 
-  <section id="ficha" aria-live="polite">
+  <section id="ficha" aria-live="polite" inert>
     <p class="ficha-meta"><span id="ficha-num">REGISTRO 01 / 60</span><span class="sep">—</span><span id="ficha-local"></span></p>
     <h2 id="ficha-nome"></h2>
     <p id="ficha-frase"></p>
@@ -181,6 +183,8 @@
     </defs>
   </svg>
 
+  <script src="js/ciclo.js"></script>
+  <script src="js/arte.js"></script>
   <script src="js/config.js"></script>
   <script src="js/lendas.js"></script>
   <script src="js/texturas.js"></script>

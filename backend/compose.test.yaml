@@ -1,0 +1,20 @@
+# Projeto e volume independentes. Nunca usa o volume bau_data.
+name: bau-etapa02-test
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_TEST_USER:-bau_test}
+      POSTGRES_PASSWORD: ${POSTGRES_TEST_PASSWORD:?Defina uma senha exclusiva de testes}
+      POSTGRES_DB: bau_test
+    ports:
+      - "127.0.0.1:${POSTGRES_TEST_PORT:-55439}:5432"
+    volumes:
+      - bau_etapa02_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bau_test -d bau_test"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+volumes:
+  bau_etapa02_test_data:

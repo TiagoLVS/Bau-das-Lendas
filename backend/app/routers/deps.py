@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 import jwt
+from uuid import UUID
 from fastapi import Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
@@ -16,7 +17,9 @@ def current_session(request: Request, db: Session = Depends(get_db)):
         payload = jwt.decode(token or '', get_settings().jwt_secret, algorithms=['HS256'],
                              issuer='bau-das-lendas', audience='bau-web',
                              options={'require': ['exp', 'iat', 'sub', 'jti']})
-    except jwt.InvalidTokenError:
+        UUID(payload['sub'])
+        UUID(payload['jti'])
+    except (jwt.InvalidTokenError, ValueError, TypeError, AttributeError):
         raise HTTPException(401, 'Entre na sua conta para continuar.')
     session = db.get(AuthSession, payload['jti'])
     expires = session.expires_at if session else None

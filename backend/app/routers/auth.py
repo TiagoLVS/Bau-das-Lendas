@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, Request
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
+from app.core.rate_limit import client_identity
+from pwdlib.exceptions import UnknownHashError
 from app.core.security import COOKIE_NAME, DUMMY_HASH, issue_token, new_id, passwords
 from app.db.session import get_db
 from app.models import AuthSession, User
@@ -36,11 +38,23 @@ def register(data: Register, response: Response, db: Session = Depends(get_db)):
 
 
 @router.post('/login', response_model=UserOut)
-def login(data: Login, response: Response, db: Session = Depends(get_db)):
+def login(data: Login, response: Response, request: Request, db: Session = Depends(get_db)):
+    settings = get_settings()
+    limiter = request.app.state.rate_limiter
+    identity = client_identity(request)
+    limiter.check('login-failure', identity, settings.rate_login_failure_limit,
+                  settings.rate_login_failure_window_seconds, record=False)
     user = db.scalar(select(User).where(User.email == str(data.email)))
-    valid = passwords.verify(data.password, user.password_hash if user else DUMMY_HASH)
+    try:
+        valid, replacement = passwords.verify_and_update(data.password, user.password_hash if user else DUMMY_HASH)
+    except (UnknownHashError, ValueError):
+        valid, replacement = False, None
     if not user or not valid:
+        limiter.check('login-failure', identity, settings.rate_login_failure_limit, settings.rate_login_failure_window_seconds)
         raise HTTPException(401, 'E-mail ou senha inválidos.')
+    limiter.clear('login-failure', identity)
+    if replacement:
+        user.password_hash = replacement
     return start_session(db, user, response)
 
 

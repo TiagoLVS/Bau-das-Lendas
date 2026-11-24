@@ -9,4 +9,4 @@ COPY public/lendas-ra.json /srv/public/lendas-ra.json
 RUN useradd --create-home bau
 USER bau
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-proxy-headers"]

@@ -14,7 +14,7 @@
 window.Bau = window.Bau || {};
 
 Bau.aparicoes = (function () {
-  const reduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduzido = () => Bau.ciclo.reduzir();
   const marcas = [];
   let ultima = '';
   const rnd = (a, b) => a + Math.random() * (b - a);
@@ -29,7 +29,7 @@ Bau.aparicoes = (function () {
   }
   const perto = (min, max) => Math.min(est().camZ + rnd(min, max), kit().D - 250);
   function guardar(el) { marcas.push(el); if (marcas.length > 40) marcas.shift().remove(); }
-  function sumir(el, depois) { setTimeout(() => el.classList.add('some'), depois); setTimeout(() => el.remove(), depois + 2600); }
+  function sumir(el, depois) { Bau.ciclo.depois(() => el.classList.add('some'), depois); Bau.ciclo.depois(() => el.remove(), depois + 2600); }
 
   const FRASES = ['ela está atrás de você', 'não olhe para trás', 'três vezes', 'você ouviu?', 'abra o baú',
     'eu ainda estou aqui', 'me encontre', 'ninguém volta', 'feche a porta', 'por que você veio'];
@@ -52,7 +52,7 @@ Bau.aparicoes = (function () {
     const e = est();
     const inicio = Math.min(e.camZ + 1500, k.D - 300);
     for (let i = 0; i < 11; i++) {
-      setTimeout(function () {
+      Bau.ciclo.depois(function () {
         const prof = inicio - i * 115;
         if (prof < e.camZ + 220) return;
         const el = k.criar('div', 'marca-plano surgindo', `left:${(i % 2 ? 736 : 658)}px;top:${k.noChao(prof, 110)}px;transform:rotate(180deg)`, k.chao,
@@ -70,7 +70,7 @@ Bau.aparicoes = (function () {
     const inicio = Math.min(e.camZ + 1300, k.D - 300);
     const x0 = rnd(520, 900);
     for (let i = 0; i < 10; i++) {
-      setTimeout(function () {
+      Bau.ciclo.depois(function () {
         const prof = inicio - i * 120;
         if (prof < e.camZ + 150) return;
         const el = k.criar('div', 'marca-plano surgindo', `left:${(x0 + (i % 2 ? 20 : -20)).toFixed(0)}px;top:${k.noTeto(prof, 110)}px`, k.teto,
@@ -87,7 +87,7 @@ Bau.aparicoes = (function () {
     const lado = ladoVisto();
     const base = perto(450, 650);
     for (let i = 0; i < 7; i++) {
-      setTimeout(function () {
+      Bau.ciclo.depois(function () {
         const { parede, x } = naParede(lado, base + i * 75, 90);
         const el = k.criar('div', 'marca-parede surgindo', `left:${x}px;top:${(300 + Math.sin(i * 1.7) * 90 + (i % 2) * 50).toFixed(0)}px;transform:rotate(${rnd(-40, 40).toFixed(0)}deg)`, parede,
           Bau.gore.mao({ larg: rnd(80, 96), cor: Bau.gore.SANGUE_FRESCO, op: 0.88 }));
@@ -101,9 +101,9 @@ Bau.aparicoes = (function () {
   function apagao() {
     const k = kit();
     const body = document.body;
-    [[0, true], [110, false], [210, true]].forEach(([t, apaga]) => setTimeout(() => body.classList.toggle('apagao', apaga), t));
+    if (!reduzido()) body.classList.add('apagao');
     Bau.som.batida();
-    setTimeout(function () {
+    Bau.ciclo.depois(function () {
       ['E', 'D'].forEach(function (lado) {
         for (let i = 0; i < 4; i++) {
           const { parede, x } = naParede(lado, perto(380, 800), 90);
@@ -117,7 +117,7 @@ Bau.aparicoes = (function () {
       }
       Bau.som.sussurro();
     }, 400);
-    setTimeout(() => body.classList.remove('apagao'), 1400);
+    Bau.ciclo.depois(() => body.classList.remove('apagao'), 1400);
   }
 
   /* 6. OLHOS NUMA FRESTA DO PAPEL DE PAREDE */
@@ -132,7 +132,7 @@ Bau.aparicoes = (function () {
     }
     const el = k.criar('div', 'olhos-fresta', `left:${x}px;top:${rnd(250, 380).toFixed(0)}px`, parede, html);
     Bau.som.sussurro();
-    setTimeout(() => el.classList.add('fechando'), 6500);
+    Bau.ciclo.depois(() => el.classList.add('fechando'), 6500);
     sumir(el, 8000);
   }
 
@@ -199,18 +199,18 @@ Bau.aparicoes = (function () {
   const ORDEM = ['escrita', 'pegadas', 'teto', 'maos', 'apagao', 'olhos', 'escorrega', 'rachaduras', 'riscos', 'gosma'];
 
   function sortear() {
-    const opcoes = reduzido ? ['escrita', 'maos', 'riscos'] : ORDEM;
+    const opcoes = reduzido() ? ['escrita', 'maos', 'riscos'] : ORDEM;
     let nome;
     do { nome = opcoes[Math.floor(Math.random() * opcoes.length)]; } while (nome === ultima && opcoes.length > 1);
     ultima = nome;
     TODAS[nome]();
-    if (Math.random() < 0.3) setTimeout(function () { Bau.som.risada(); }, 1500 + Math.random() * 2000);
+    if (Math.random() < 0.3) Bau.ciclo.depois(function () { Bau.som.risada(); }, 1500 + Math.random() * 2000);
   }
 
   function agendar(ms) {
-    setTimeout(function () {
+    Bau.ciclo.depois(function () {
       const e = est();
-      const livre = e.dentro && document.getElementById('dossie').hidden && !document.hidden;
+      const livre = e.dentro && document.getElementById('dossie').hidden && !document.hidden && !Bau.manifestacoes?.inspecionar().ativo;
       if (livre) sortear();
       agendar(7000 + Math.random() * 5000);
     }, ms);

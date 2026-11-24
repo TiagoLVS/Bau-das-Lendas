@@ -5,7 +5,7 @@
 window.Bau = window.Bau || {};
 
 Bau.som = (function () {
-  let ctx = null, mestre = null, ligado = false, ambiente = null;
+  let ctx = null, mestre = null, ligado = false, ambiente = null, compressor = null;
 
   function ruidoBuffer(seg) {
     const b = ctx.createBuffer(1, ctx.sampleRate * seg, ctx.sampleRate);
@@ -24,14 +24,17 @@ Bau.som = (function () {
     ctx = new (window.AudioContext || window.webkitAudioContext)();
     mestre = ctx.createGain();
     mestre.gain.value = 0;
-    mestre.connect(ctx.destination);
+    compressor = ctx.createDynamicsCompressor();
+    compressor.threshold.value = -18; compressor.knee.value = 12; compressor.ratio.value = 3;
+    compressor.attack.value = 0.025; compressor.release.value = 0.2;
+    mestre.connect(compressor).connect(ctx.destination);
   }
 
   function ligar() {
     iniciar();
-    if (ctx.state === 'suspended') ctx.resume();
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
     ligado = true;
-    mestre.gain.setTargetAtTime(0.9, ctx.currentTime, 0.6);
+    mestre.gain.setTargetAtTime(0.55, ctx.currentTime, 0.6);
     if (!ambiente) tocarAmbiente();
   }
   function desligar() {
@@ -357,6 +360,9 @@ Bau.som = (function () {
 
   return {
     ligar, desligar,
+    suspender(oculto) { if (!ctx || ctx.state === 'closed') return; if (oculto) ctx.suspend().catch(() => {}); else if (ligado) ctx.resume().catch(() => {}); },
+    dispose() { if (!ctx) return; ligado = false; for (const node of Object.values(ambiente || {})) { try { node.stop(); node.disconnect(); } catch {} } ambiente = null; mestre.disconnect(); compressor.disconnect(); ctx.close().catch(() => {}); ctx = null; },
+    inspecionar() { return { ligado, estado: ctx?.state || 'não iniciado', ambiente: !!ambiente, volume: ctx ? 0.55 : 0 }; },
     get ligado() { return ligado; },
     passo, uivo, popopo, trem, sussurro, vento, rangido, batida, gota, tensao, splat, gosma, coracao, passoTeto, batidaMao, arranhar, risada
   };

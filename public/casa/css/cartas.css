@@ -28,7 +28,8 @@ button { font: inherit; color: inherit; }
 .topo { position: sticky; top: 0; z-index: 20; height: 76px; padding: 0 var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: 20px;
   background: linear-gradient(var(--breu), rgba(11,10,9,0)); font: 11px var(--mono); letter-spacing: .2em; text-transform: uppercase; }
 .marca { font: 24px var(--serif); letter-spacing: 0; text-transform: none; text-decoration: none; white-space: nowrap; }
-.topo nav { display: flex; gap: clamp(14px, 2.4vw, 36px); align-items: center; }
+.topo nav { display: flex; min-width:0; max-width:100%; overflow-x:auto; overflow-y:hidden;
+  gap: clamp(14px, 2.4vw, 36px); align-items: center; }
 .topo nav a { text-decoration: none; color: #cbc2b2; padding: 6px 0; }
 .topo nav a:hover { color: var(--ambar); }
 .topo nav a.ativo { color: var(--osso); border-bottom: 1px solid var(--ambar); }
@@ -167,15 +168,39 @@ h1 { margin: 12px 0 0; font: 400 clamp(40px, 5vw, 68px)/1 var(--serif); }
 .mesa-registro details { max-width:var(--carta-l); font-size:15px; line-height:1.5; color:var(--fumaca); }
 .mesa-registro details[open] { max-height:250px; overflow:auto; }
 .mesa-registro summary { cursor:pointer; font:10px var(--mono); color:var(--ambar); }
-.revelar { overflow:auto; }
-.revelar .carta-grande { --carta-l:min(340px,70vw,calc(55dvh * 2 / 3)); }
-@media(max-height:500px) { .revelar-palco { gap:10px; padding:12px; } }
+/* Uma coluna que pode encolher: a legenda não define a largura da viewport.
+   A linha da carta absorve o espaço restante; o fechamento fica fora dela. */
+.revelar { height:100dvh; grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,1fr); }
+.revelar-palco { width:100%; height:100%; min-width:0; min-height:0; display:grid;
+  grid-template-columns:minmax(0,1fr); grid-template-rows:auto minmax(0,1fr) auto auto;
+  justify-items:center; gap:14px;
+  padding:max(24px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left)); }
+#revelar-carta { position:relative; z-index:0; isolation:isolate; container-type:size;
+  width:100%; height:100%; min-width:0; min-height:0; display:grid; place-items:center;
+  overflow:auto; overscroll-behavior:contain; }
+.revelar .carta-grande { width:min(340px,100%); min-width:0; align-items:center; }
+.revelar .carta-grande .cx-inclina { width:min(100%,70vw,calc((100cqh - 44px) * 2 / 3)); flex:none; }
+.revelar .cx-legenda { width:100%; min-width:0; flex-wrap:wrap; justify-content:center; text-align:center; font-size:11px; pointer-events:none; }
+.revelar .cx-legenda span { min-width:0; white-space:normal; overflow-wrap:anywhere; }
+.revelar-titulo, .revelar-instrucao { max-width:100%; overflow-wrap:anywhere; }
+.revelar-fechar { position:relative; z-index:1; max-width:100%; flex:none; }
+@media(max-height:500px) { .revelar-palco { gap:8px;
+  padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left)); } }
 .revelar-fechar:hover { background: var(--ambar); color: var(--breu); }
+
+/* Alvos locais da galeria, sem alterar a navegação das outras páginas. */
+.topo nav a { display:inline-flex; flex:0 0 auto; white-space:nowrap; align-items:center; min-width:44px; min-height:44px; }
+.mesa-registro { min-width:0; }
+.mesa-registro > .filtro { max-width:100%; font-size:11px; }
+.mesa-registro summary { min-height:44px; align-content:center; font-size:11px; }
+.mesa .cx-legenda { min-width:0; max-width:100%; flex-wrap:wrap; font-size:11px; }
+.mesa .cx-legenda span { min-width:0; white-space:normal; overflow-wrap:anywhere; }
+.busca-cartas { font-size:12px; }
 
 @media (max-width: 640px) {
   .topo { height: auto; min-height: 76px; padding-block: 12px; flex-wrap: wrap; }
   .topo nav { width: 100%; min-width: 0; gap: 16px; overflow-x: auto; overflow-y: hidden; padding-bottom: 6px; scrollbar-width: thin; }
-  .topo nav a { flex: 0 0 auto; white-space: nowrap; font-size: 9px; }
+  .topo nav a { flex: 0 0 auto; white-space: nowrap; font-size: 11px; }
   .topo nav .nav-ra { padding: 6px 8px; }
   .filtros { width: 100%; }
   .busca-cartas { flex: 1 1 100%; }
@@ -184,3 +209,30 @@ h1 { margin: 12px 0 0; font: 400 clamp(40px, 5vw, 68px)/1 var(--serif); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+.perfil-acesso { display:inline-flex; align-items:center; justify-content:center; min-height:44px; min-width:44px; font:11px var(--mono); color:var(--osso); text-decoration:none; }
+@media(max-width:640px) { .topo nav { order:3; } }
+
+/* A arte usa a linha flexível; legenda e virar têm espaço próprio. */
+.revelar .carta-grande { display:grid; grid-template-rows:minmax(0,1fr) auto auto; height:100%; }
+.revelar .carta-grande .cx-inclina { justify-self:center; width:auto; height:100%; max-height:min(510px,calc(100cqw * 3 / 2)); aspect-ratio:2/3; }
+.topo .marca, .topo .perfil-acesso { min-height:44px; display:inline-flex; align-items:center; }
+@media (max-height:500px) and (orientation:landscape) {
+  .revelar .carta-grande { width:min(680px,100%); grid-template-columns:auto minmax(0,1fr); grid-template-rows:auto minmax(0,1fr); column-gap:20px; align-items:center; }
+  .revelar .carta-grande .cx-inclina { grid-column:1; grid-row:1/3; max-height:100%; }
+  .revelar .cx-legenda { grid-column:2; grid-row:1; }
+  .revelar .cx-toggle { grid-column:2; grid-row:2; }
+}
+
+/* Revisão visual R2: cada registro tem a largura exata da carta; rótulos longos
+   quebram linha em vez de alargar a coluna, e os controles se alinham entre si. */
+.mesa { align-items: start; }
+.mesa-registro { width: var(--carta-l); align-items: stretch; gap: 10px; }
+.mesa-registro .carta-x { width: 100%; }
+.mesa-registro .cx-toggle { width: 100%; transition: background .2s, border-color .2s; }
+.mesa-registro .cx-toggle:hover { background: #2a1d15; border-color: #d9a24a; }
+.mesa-registro > .filtro { width: 100%; white-space: normal; text-align: center; justify-content: center; line-height: 1.35; }
+.mesa-registro .cx-legenda { flex-direction: column; align-items: flex-start; gap: 2px; min-height: 2.8em; }
+.mesa-registro details { width: 100%; text-align: left; }
+.mesa-registro summary { text-align: center; }
+.mesa-registro .carta-x .cx-lado { transition: box-shadow .35s ease, visibility 0s linear .27s; }
+.mesa-registro .carta-x:hover .cx-lado, .mesa-registro .carta-x:focus-visible .cx-lado { box-shadow: 0 30px 50px #000a, 0 0 0 1px #d9a24a55; }

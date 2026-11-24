@@ -1,3 +1,4 @@
+import { educationalBack } from '../../educational-card.js'
 import { cardBack } from '../../card-art.js'
 
 let audio
@@ -30,12 +31,14 @@ export function mountCard(legend, { unlocked = false, extra = false, preview = f
   const front = el.querySelector('.cx-frente'), back = el.querySelector('.cx-verso')
   const label = el.querySelector('.cx-face')
   el.querySelector('.cx-nome').textContent = legend.nome
+  const toggle=document.createElement('button');toggle.type='button';toggle.className='cx-toggle';el.append(toggle)
+  const reading=educationalBack(legend);if(allowed)el.querySelector('.face-costas').append(reading)
   let turns = 0
   const update = () => {
     const rear = turns % 2 === 1
     el.dataset.face = rear ? 'verso' : 'frente'
     el.querySelector('.cx-virador').style.transform = `rotateY(${turns * 180}deg)`
-    front.setAttribute('aria-hidden', String(rear)); back.setAttribute('aria-hidden', String(!rear))
+    front.setAttribute('aria-hidden', String(rear)); back.setAttribute('aria-hidden', String(!rear));front.inert=rear;back.inert=!rear;reading.tabIndex=rear&&allowed?0:-1;toggle.textContent=rear?'Voltar à frente':'Virar carta';toggle.setAttribute('aria-label',`${rear?'Voltar à frente':'Virar carta'}: ${legend.nome}`);toggle.setAttribute('aria-pressed',String(rear))
     label.textContent = extra
       ? `EXPOSIÇÃO · ${rear ? 'VERSO' : 'FRENTE'}`
       : unlocked
@@ -44,7 +47,6 @@ export function mountCard(legend, { unlocked = false, extra = false, preview = f
           ? `PRÉVIA PÚBLICA · ${rear ? 'VERSO' : 'FRENTE'}`
           : 'LACRADA'
     el.setAttribute('aria-label', `${legend.nome}. ${revealed ? `Mostrando ${rear ? 'verso' : 'frente'}. Ative para virar.` : 'Carta ainda não descoberta.'}`)
-    if (allowed) el.setAttribute('aria-pressed', String(rear))
   }
   function image(path, alt, parent) {
     const img = document.createElement('img')
@@ -62,17 +64,19 @@ export function mountCard(legend, { unlocked = false, extra = false, preview = f
     text.textContent = revealed ? 'Arte ainda não fornecida' : '◈ Carta lacrada'
     el.querySelector('.face-arte').append(text)
   }
-  image(`/casa/img/verso-${cardBack(legend.id)}.svg`, `Verso de ${legend.nome}`, el.querySelector('.face-costas'))
+  if(!allowed)image(`/casa/img/verso-${cardBack(legend.id)}.svg`, `Verso de ${legend.nome}`, el.querySelector('.face-costas'))
   const shine = document.createElement('div'); shine.className = 'holo'; shine.setAttribute('aria-hidden', 'true'); el.querySelector('.face-arte').append(shine)
+  el.setAccess = value => { unlocked=Boolean(value);preview=true;el.dataset.unlocked=String(unlocked);el.dataset.preview='true';update() }
   el.virar = (silent = false) => { if (allowed) { turns++; update(); if (silent !== true) flipSound() } }
+  toggle.hidden=!allowed
   if (allowed) {
-    el.tabIndex = 0; el.setAttribute('role', 'button')
-    el.addEventListener('click', el.virar)
+    el.tabIndex = 0; el.setAttribute('role', 'group')
+    toggle.addEventListener('click',event=>{event.stopPropagation();el.virar()});front.addEventListener('click',()=>el.virar())
     el.addEventListener('keydown', event => {
-      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); el.virar() }
+      if (event.target===el && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); event.stopPropagation(); el.virar() }
     })
     el.addEventListener('pointermove', event => {
-      if (event.pointerType === 'touch' || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      if (event.pointerType === 'touch' || (matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.dataset.reduzir==='true')) return
       el.classList.add('ativa')
       const r = el.getBoundingClientRect(), x = (event.clientX-r.left)/r.width, y = (event.clientY-r.top)/r.height
       el.style.setProperty('--rx', `${(.5-y)*10}deg`); el.style.setProperty('--ry', `${(x-.5)*12}deg`)

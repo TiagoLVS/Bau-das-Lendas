@@ -36,7 +36,7 @@ Bau.corredor = (function () {
 
   const mundo = document.getElementById('mundo');
   const cena = document.getElementById('cena');
-  const reduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduzido = () => Bau.ciclo.reduzir();
 
   const J = Bau.jardim;                           // jardim e fachada (js/jardim.js)
   const NASCE = J ? J.INICIO : -900;              // a câmera nasce no portão do jardim
@@ -78,9 +78,9 @@ Bau.corredor = (function () {
   const naDir = (prof, larg) => D - prof - larg / 2;
   const noChao = (prof, alt) => D - prof - alt / 2;
   const noTeto = (prof, alt) => prof + ATRAS - alt / 2;
-  const recortar = (el, a, b) => { pedacos.push({ el: el, a: a, b: b, vis: true }); return el; };
+  const recortar = (el, a, b, montar) => { pedacos.push({ el, a, b, montar, vis: null }); return el; };
 
-  const kit = { criar, svg, naEsq, naDir, noChao, noTeto, W, H, ATRAS, estado: e };
+  const kit = { criar, svg, recortar, naEsq, naDir, noChao, noTeto, W, H, ATRAS, estado: e };
 
   /* ---------- alas a partir das lendas ---------- */
   function calcularAlas(lendas) {
@@ -155,15 +155,17 @@ Bau.corredor = (function () {
     lendas.forEach(function (l, i) {
       const parede = l.lado === 'E' ? esq : dir;
       const x = l.lado === 'E' ? naEsq(l.prof, 240) : naDir(l.prof, 240);
-      const c = criar('div', 'carta pedaco ' + (l.lado === 'E' ? 'lado-esq' : 'lado-dir'), `left:${x}px`, parede,
-        Bau.cartas.html(l, { coletada: Bau.colecao?.has(l.id) }));
+      const c = criar('div', 'carta pedaco ' + (l.lado === 'E' ? 'lado-esq' : 'lado-dir'), `left:${x}px`, parede);
       c.dataset.legendId = l.id;
       c.setAttribute('title', l.nome);
       c.addEventListener('click', function () {
         if (e.i !== i) irPara(i); else if (Bau.abrirDossie) Bau.abrirDossie(i);
       });
       cartas.push(c);
-      recortar(c, l.prof - 200, l.prof + 200);
+      recortar(c, l.prof - 200, l.prof + 200, vis => {
+        if (vis) { c.innerHTML = Bau.cartas.html(l, { coletada: Bau.colecao?.has(l.id) }); c.dataset.montada = 'true'; }
+        else { c.replaceChildren(); delete c.dataset.montada; }
+      });
     });
 
     // Peça extra de exposição, sem posição ou desbloqueio no catálogo oficial.
@@ -179,6 +181,7 @@ Bau.corredor = (function () {
     if (Bau.decor) Bau.decor.montar(kit);
     if (Bau.gore) Bau.gore.montar(kit);
     if (J) J.montar(kit);
+    Bau.arte?.corredor(kit);
 
     /* --- fundo: porta do Grimório + olhos + placa de Kisaragi (escondida) --- */
     criar('div', '', 'left:560px;top:250px;width:320px;height:650px;border-radius:160px 160px 0 0;background:#050404;border:14px solid #3a2a1a;box-sizing:border-box;box-shadow:inset 0 0 120px rgba(217,162,74,.18)', fundo);
@@ -258,9 +261,12 @@ Bau.corredor = (function () {
   function girar() { e.giroInicio = performance.now(); }
 
   /* ---------- loop de animação ---------- */
-  let antes = performance.now();
+  let antes = performance.now(), frame = 0, stopped = false, ultimaCam = '', ultimoHolo = '', palcosJardim = null;
   function quadro(agora) {
-    const dt = Math.min(64, Math.max(1, agora - antes)); antes = agora;
+    if (stopped) return;
+    if (document.hidden || !document.getElementById('dossie').hidden) { frame = requestAnimationFrame(quadro); antes = agora; return; }
+    const decorrido = Math.max(1, agora - antes);
+    const dt = Math.min(1000, decorrido); antes = agora;
 
     // andando sozinho (botão)
     if (e.auto) {
@@ -274,7 +280,7 @@ Bau.corredor = (function () {
     }
 
     // andar (suave, igual em qualquer computador)
-    const k = reduzido ? 1 : 1 - Math.pow(1 - VELOCIDADE, dt / 16.7);
+    const k = reduzido() ? 1 : 1 - Math.pow(1 - VELOCIDADE, dt / 16.7);
     e.camZ += (e.alvoZ - e.camZ) * k;
     const vel = Math.abs(e.alvoZ - e.camZ);
 
@@ -302,12 +308,13 @@ Bau.corredor = (function () {
     const vies = e.dentro && !e.kisaragi ? (l.lado === 'E' ? -VIES : VIES) * (1 - forca) * perto : 0;
     const alvoYaw = Math.sign(e.mx) * Math.pow(forca, 1.35) * OLHAR_X + vies;
     const alvoPitch = -e.my * OLHAR_Y + (J && !e.dentro ? 5 : 0); // no jardim, olha um pouco pro céu
-    const kc = reduzido ? 1 : 1 - Math.pow(0.93, dt / 16.7);
+    const kc = reduzido() ? 1 : 1 - Math.pow(0.93, dt / 16.7);
     e.yaw += (alvoYaw - e.yaw) * kc;
     e.pitch += (alvoPitch - e.pitch) * kc;
 
     // giro do Saci
     let giro = 0;
+    if (reduzido()) e.giroInicio = 0;
     if (e.giroInicio) {
       const p = Math.min(1, (agora - e.giroInicio) / 1700);
       giro = 360 * (1 - Math.pow(1 - p, 3));
@@ -316,28 +323,40 @@ Bau.corredor = (function () {
     e.giro = giro;
 
     // balanço da cabeça ao andar
-    const bob = reduzido ? 0 : Math.sin(agora * 0.009) * Math.min(vel / 300, 1) * 5;
+    const bob = reduzido() ? 0 : Math.sin(agora * 0.009) * Math.min(vel / 300, 1) * 5;
 
-    mundo.style.setProperty('--holo', (50 + e.yaw * 1.2).toFixed(1) + '%');
+    // Só escreve quando muda: com a câmera parada, nenhuma invalidação de estilo
+    // atravessa a cena (antes eram ~30 recálculos/s do jardim inteiro em repouso).
+    const holo = (50 + e.yaw * 1.2).toFixed(1) + '%';
+    if (holo !== ultimoHolo) { ultimoHolo = holo; mundo.style.setProperty('--holo', holo); }
     const cam = `translateY(${bob.toFixed(2)}px) rotateX(${e.pitch.toFixed(3)}deg) rotateY(${(e.yaw + giro).toFixed(3)}deg) translateZ(${(e.camZ + FOCO).toFixed(1)}px) translateX(${(-e.camX).toFixed(1)}px)`;
-    mundo.style.transform = cam;
-    cena.style.setProperty('--cam', cam);   // o jardim (js/jardim.js) usa a mesma câmera
+    if (cam !== ultimaCam) {
+      ultimaCam = cam;
+      mundo.style.transform = cam;
+      // O jardim (js/jardim.js) usa a mesma câmera. Antes ela ia em --cam no #cena:
+      // como variáveis CSS são herdadas, cada passo invalidava a árvore inteira.
+      // Agora o transform vai direto nos poucos palcos que o usam.
+      if (!palcosJardim || !palcosJardim.length) palcosJardim = cena.querySelectorAll(':scope > .j-palco');
+      for (let n = 0; n < palcosJardim.length; n++) palcosJardim[n].style.transform = cam;
+    }
 
     // só desenha o que está perto
     const de = e.camZ - VER_ATRAS, ate = e.camZ + VER_FRENTE;
     for (let n = 0; n < pedacos.length; n++) {
       const p = pedacos[n], vis = p.b >= de && p.a <= ate;
-      if (vis !== p.vis) { p.vis = vis; p.el.style.display = vis ? '' : 'none'; }
+      if (vis !== p.vis) { p.vis = vis; p.el.style.display = vis ? '' : 'none'; p.montar?.(vis); }
     }
     // neblina acompanha a câmera
     neblinas.forEach(function (n) {
-      n.el.style.transform = `translateZ(${(-Math.max(n.dist - 1000, e.camZ + n.dist)).toFixed(0)}px)`;
+      const t = `translateZ(${(-Math.max(n.dist - 1000, e.camZ + n.dist)).toFixed(0)}px)`;
+      if (t !== n.ultima) { n.ultima = t; n.el.style.transform = t; }
     });
 
     if (Bau.decor) Bau.decor.atualizar(e, agora);
+    Bau.manifestacoes?.atualizar(decorrido / 1000);
     if (J) J.atualizar(e, agora);
 
-    requestAnimationFrame(quadro);
+    frame = requestAnimationFrame(quadro);
   }
 
   function iniciar(lendas, callback, ganchos) {
@@ -346,13 +365,15 @@ Bau.corredor = (function () {
     construir(lendas);
     ajustar();
     window.addEventListener('resize', ajustar);
-    requestAnimationFrame(quadro);
+    frame = requestAnimationFrame(quadro);
   }
 
   return {
     atualizarColecao() {
-      cartas.forEach((card, i) => { card.innerHTML = Bau.cartas.html(Bau.lendas[i], { coletada: Bau.colecao?.has(Bau.lendas[i].id) }); });
+      cartas.forEach((card, i) => { if (card.dataset.montada) card.innerHTML = Bau.cartas.html(Bau.lendas[i], { coletada: Bau.colecao?.has(Bau.lendas[i].id) }); });
     },
+    parar() { stopped = true; cancelAnimationFrame(frame); window.removeEventListener('resize', ajustar); },
+    retomar() { if (!stopped) return; stopped = false; antes = performance.now(); ajustar(); window.addEventListener('resize', ajustar); frame = requestAnimationFrame(quadro); },
     iniciar, irPara, andar, seguir, entrar, sair, olhar, girar, ajustar, zonaEm, alvoDe,
     get estado() { return e; },
     get kit() { return kit; },

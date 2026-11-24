@@ -76,7 +76,47 @@
     @keyframes emerge { 0% {opacity:0;transform:translate3d(var(--from-x,0px),var(--from-y,130px),-500px) scale(.16) rotateZ(-12deg);filter:blur(10px)} 73% {opacity:1;transform:translate3d(0,0,65px) scale(1.09) rotateZ(2deg);filter:blur(0)} 100% {opacity:1;transform:translate3d(0,0,0) scale(1) rotateZ(0);filter:blur(0)} }
     @media (max-height:680px) { #cardStage {height:47dvh;width:calc(47dvh * .73)} .faceContent{padding:10px;gap:5px}.rearSigil{font-size:65px}.cardName{font-size:22px}.cardArtwork{min-height:65px}.reward-heading h2{font-size:26px}.reward-layout{gap:8px} }
     @media (prefers-reduced-motion:reduce) { *,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;} }
+
+    /* Revisão visual R2: guia de enquadramento antes da câmera e alerta de erro. */
+    .mira { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; pointer-events:none; transition:opacity .5s ease; }
+    body[data-camera='ativa'] .mira { opacity:0; visibility:hidden; }
+    .mira-quadro { position:relative; width:min(46vw,46dvh,210px); aspect-ratio:1; display:grid; place-items:center;
+      background:radial-gradient(circle, rgba(164,91,97,.16), transparent 68%); }
+    .mira-quadro i { position:absolute; width:24%; height:24%; border:2px solid #c98f8a; opacity:.85; }
+    .mira-quadro i:nth-child(1) { top:0; left:0; border-right:0; border-bottom:0; }
+    .mira-quadro i:nth-child(2) { top:0; right:0; border-left:0; border-bottom:0; }
+    .mira-quadro i:nth-child(3) { bottom:0; left:0; border-right:0; border-top:0; }
+    .mira-quadro i:nth-child(4) { bottom:0; right:0; border-left:0; border-top:0; }
+    .mira-quadro span { font:600 11px 'DM Sans',sans-serif; letter-spacing:.3em; color:#d9b8b4; }
+    @media (prefers-reduced-motion: no-preference) { html:not([data-reduzir='true']) .mira-quadro { animation:mira-respira 3.2s ease-in-out infinite; } }
+    @keyframes mira-respira { 50% { transform:scale(.94); opacity:.8; } }
+    .mira-passos { margin:0; padding:0; list-style:none; counter-reset:passo; display:grid; gap:8px; font-size:12.5px; color:#cfc4c1; }
+    .mira-passos li { counter-increment:passo; display:flex; align-items:center; gap:10px; }
+    .mira-passos li::before { content:counter(passo); width:20px; height:20px; display:grid; place-items:center; border:1px solid #a45b61; border-radius:50%; font:600 10px 'DM Sans',sans-serif; color:#e3c3bf; }
+    @media (max-height:500px) and (orientation:landscape) { .mira-passos { display:none; } .mira { gap:0; } .mira-quadro { width:min(28dvh,120px); } }
+    body[data-camera='erro'] #status { padding:10px 12px; border-left:2px solid #d0525e; background:rgba(120,28,38,.28); color:#f3dcd9; }
   </style>
+<link rel="stylesheet" href="/casa/css/card-view.css">
+<style>#cardStage {width:min(72vw,250px,calc(45dvh * 2 / 3))!important;aspect-ratio:2/3;height:auto!important;max-height:none!important} .cardFace .educational-back{padding:18px} @media(prefers-reduced-motion:reduce){#cardRotor{transition:none!important}}</style>
+<style>
+/* Etapa 10: somente apresentação e controles, sem mudar a câmera/pose. */
+#home { display:inline-flex; min-width:44px; min-height:44px; align-items:center; }
+#hud { padding-left:max(20px,env(safe-area-inset-left)); padding-right:max(20px,env(safe-area-inset-right)); }
+.reward-controls .action { min-height:44px; }
+#rewardOverlay { overflow-y:auto; overscroll-behavior:contain; padding-left:max(14px,env(safe-area-inset-left)); padding-right:max(14px,env(safe-area-inset-right)); }
+#demoNotice a { display:inline-flex; align-items:center; min-height:44px; }
+@media (max-height:500px) and (orientation:landscape) {
+  #hud { padding-top:max(8px,env(safe-area-inset-top)); padding-bottom:max(12px,env(safe-area-inset-bottom)); }
+  #hud h1 { font-size:30px; margin-top:0; }
+  #status { margin-block:6px; }
+  #hint { margin:0; }
+  .reward-layout { width:min(100%,760px); height:100%; display:grid; grid-template-columns:auto minmax(0,1fr); grid-template-rows:auto minmax(0,1fr); gap:8px 20px; align-items:center; }
+  .reward-heading { grid-column:1/-1; }
+  .reward-heading h2 { font-size:26px; }
+  #cardStage { grid-column:1; grid-row:2; width:min(40vw,250px,calc((100dvh - 100px) * 2 / 3))!important; justify-self:center; }
+  .reward-controls { grid-column:2; grid-row:2; max-height:100%; overflow-y:auto; overscroll-behavior:contain; }
+}
+</style>
 </head>
 <body>
   <div id="ar"></div>
@@ -86,6 +126,10 @@
       <h1>O ritual de descoberta</h1>
       <span id="progress">Carregando 60 registros...</span>
       <p id="status" role="status" aria-live="polite">Preparando a experiência de realidade aumentada.</p>
+    </div>
+    <div class="mira" aria-hidden="true">
+      <div class="mira-quadro"><i></i><i></i><i></i><i></i><span>QR 02</span></div>
+      <ol class="mira-passos"><li>Toque em iniciar câmera</li><li>Enquadre o QR 02 inteiro</li><li>Abra o baú quando ele surgir</li></ol>
     </div>
     <div class="bottom">
       <button class="action" id="start" disabled>INICIAR CÂMERA</button>
@@ -104,7 +148,7 @@
         </div>
       </div>
       <div class="reward-controls">
-        <span class="reward-caption" id="flipLabel">FACE 1 DE 3 · ILUSTRAÇÃO E ATRIBUTOS</span>
+        <span class="reward-caption" id="flipLabel">FRENTE · ILUSTRAÇÃO</span>
         <button class="action" id="flipButton">GIRAR CARTA →</button>
         <button class="action secondary" id="rescanButton">ESCANEAR NOVAMENTE</button>
         <span class="reward-caption" id="demoNotice">Coleção salva na sua conta. <a href="/?album=1">Abrir meu grimório</a></span>

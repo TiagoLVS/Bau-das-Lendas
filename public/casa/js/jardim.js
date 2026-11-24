@@ -8,7 +8,7 @@
 window.Bau = window.Bau || {};
 
 Bau.jardim = (function () {
-  const TINTA = '#efe6d2', BREU = '#0b0a09', LUZ = '#f4ecd8', CAPUZ = '#b3261e';
+  const TINTA = '#b5b8a3', BREU = '#0b100d', LUZ = '#e5c88b', CAPUZ = '#b3261e';
   const FACHADA = -1012;           // fachada: 12px antes da boca do corredor (evita brigar com as paredes)
   const INICIO = -5600;            // onde a câmera nasce
   const PORTAO = -4500;            // profundidade do portão
@@ -58,7 +58,7 @@ Bau.jardim = (function () {
     };
     c.ret = function (x, y, w, h, a) { return c.poli([[x, y], [x + w, y], [x + w, y + h], [x, y + h]], true, a); };
     c.encher = function (pts) { c.f += 'M' + pts.map((p) => q(p[0]) + ' ' + q(p[1])).join('L') + 'Z'; return c; };
-    c.svg = function (lw) {
+    c.svg = function (lw, lavagem) {
       lw = lw || 5;
       return (c.f ? `<path d="${c.f}" fill="${BREU}"/>` : '') +
         `<g fill="none" stroke="${TINTA}" stroke-linecap="round" stroke-linejoin="round">` +
@@ -315,7 +315,7 @@ Bau.jardim = (function () {
 
     // o buraco da porta é recortado dentro do próprio desenho
     const recorte = `M0 0H${W}V${H}H0Z M1540 ${H}V2740A260 260 0 0 1 2060 2740V${H}Z`;
-    const desenho = ch.svg(6) + te.svg(6) + pa.svg(6) + to.svg(6) + ja.svg(6) + fr.svg(6);
+    const desenho = ch.svg(6) + te.svg(6) + pa.svg(6, true) + to.svg(6, true) + ja.svg(6) + fr.svg(6);
     // a fachada é dividida em 9 pedaços: placa de vídeo nenhuma gosta de uma textura gigante
     const CO = 3, LI = 3, tw = W / CO, th = H / LI;
     el.fachada = [];
@@ -505,6 +505,7 @@ Bau.jardim = (function () {
     chao();
     semente = 31; fachada();
     vegetacao();
+    Bau.arte?.jardim(K, cartaz);
     semente = 91; ceu();
     semente = 5; personagens();
     abrirPorta(false);
@@ -529,7 +530,7 @@ Bau.jardim = (function () {
     }
     // o corredor só é desenhado quando você chega perto da porta (mais leve)
     const verCorredor = e.camZ > -2600;
-    if (verCorredor !== el.verCorredor) { el.verCorredor = verCorredor; el.mundo.style.visibility = verCorredor ? '' : 'hidden'; el.brilho.style.display = verCorredor ? 'none' : ''; }
+    if (verCorredor !== el.verCorredor) { el.verCorredor = verCorredor; el.mundo.style.visibility = verCorredor ? '' : 'hidden'; el.mundo.classList.toggle('animacoes-pausadas', !verCorredor); el.brilho.style.display = verCorredor ? 'none' : ''; }
     abrirPorta(e.camZ > -2500);
     if (!fora) return;
     // o que ficou para trás da câmera some
@@ -539,17 +540,24 @@ Bau.jardim = (function () {
     });
     // varanda some quando você passa por ela
     const passouVaranda = e.camZ > -1230;
-    ['coluna0', 'coluna1', 'telhado'].forEach(function (k) { el[k].style.visibility = passouVaranda ? 'hidden' : ''; });
+    if (passouVaranda !== el.passouVaranda) {
+      el.passouVaranda = passouVaranda;
+      ['coluna0', 'coluna1', 'telhado'].forEach(function (k) { el[k].style.visibility = passouVaranda ? 'hidden' : ''; });
+    }
 
     // Chapeuzinho vai na frente, o lobo vem atrás
     [[el.chapeu, 0, 180], [el.lobo, 9000, 420]].forEach(function (a) {
-      const t = ((agora + CICLO - a[1]) % CICLO) / CICLO; // 0..1
+      const t = Bau.ciclo.reduzir() ? .27 : ((agora + CICLO - a[1]) % CICLO) / CICLO; // 0..1
       const ida = Math.min(1, t / 0.62);
       const prof = -4300 + ida * (FACHADA - 60 + 4300);
       const x = caminhoX(prof) + (a[0] === el.lobo ? 60 : -40);
       const visivel = t < 0.62 && prof > e.camZ + 700;
-      a[0].style.opacity = visivel ? (prof > -1250 ? lim((FACHADA - 60 - prof) / 190, 0, 1) : 1) : 0;
-      a[0].style.transform = `translate3d(${q(x - a[2] / 2)}px,0,${q(-prof)}px)`;
+      // Mesma animação; apenas não regrava estilos idênticos nem move a figura invisível.
+      const op = String(visivel ? (prof > -1250 ? lim((FACHADA - 60 - prof) / 190, 0, 1) : 1) : 0);
+      if (op !== a[0].ultimaOp) { a[0].ultimaOp = op; a[0].style.opacity = op; }
+      if (op === '0') return;
+      const tf = `translate3d(${q(x - a[2] / 2)}px,0,${q(-prof)}px)`;
+      if (tf !== a[0].ultimoTf) { a[0].ultimoTf = tf; a[0].style.transform = tf; }
     });
   }
 

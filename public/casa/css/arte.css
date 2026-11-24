@@ -1,0 +1,60 @@
+/* Etapa 11: gravura envelhecida, luz localizada e espaços vazios. */
+#palco { background:radial-gradient(ellipse at 72% 12%,#26322e 0, #121918 27%,#070909 72%); }
+#grao { background:url('../img/cenario/texturas/grao.png') repeat; }
+#btn-movimento { flex:none; width:44px; height:44px; border:1px solid #4b493b; background:#0b0a09cc; cursor:pointer; font:24px Georgia; }
+#btn-movimento[aria-pressed=true] { color:var(--ambar); border-color:var(--ambar-escuro); }
+.manifestacao { pointer-events:none; }
+.manifestacao svg { overflow:visible; }
+.manifestacao-ar { transform-origin:180px 460px; animation:arte-redemoinho 6s linear infinite; }
+.manifestacao-alta { transform-origin:180px 560px; animation:arte-presenca 10s ease-in-out infinite alternate; }
+.manifestacao-fogo { animation:arte-vela 8s ease-in-out infinite; }
+.manifestacao.movimento-reduzido * { animation:none!important; }
+@keyframes arte-redemoinho { to { transform:rotateY(360deg); } }
+@keyframes arte-presenca { to { transform:rotate(1deg); } }
+#manifestacao-legenda { position:fixed; top:calc(110px + env(safe-area-inset-top)); left:50%; transform:translateX(-50%); max-width:calc(100% - 32px); margin:0; padding:9px 16px; z-index:9; pointer-events:none; font:12px/1.5 var(--mono); letter-spacing:.1em; color:#c8bda6; text-align:center; opacity:0; transition:opacity 1.2s; background:linear-gradient(90deg,transparent,#0b100de6,transparent); }
+#manifestacao-legenda.ver { opacity:1; }
+body.demonstracao #ficha .ficha-meta,body.demonstracao #ficha-nome,body.demonstracao #ficha-frase { visibility:hidden; }
+.j-fachada { color:#a3aa9b; }
+.j-brilho { background:radial-gradient(ellipse at 50% 62%,#e5b66f66,#9b774629 40%,transparent 71%); }
+.arte-bruma { pointer-events:none; }
+.arte-bruma-camada { inset:0; opacity:.65; background:radial-gradient(ellipse at 50% 76%,#829a9129,transparent 65%); }
+.arte-luz-chao { pointer-events:none; background:radial-gradient(ellipse,#c3b68b26,transparent 68%); }
+.arte-arco-entrada { pointer-events:none; }
+.arte-arco { pointer-events:none; border:24px solid #211e18; border-bottom:0; border-radius:46% 46% 0 0 / 28% 28% 0 0; box-shadow:inset 8px 4px 0 #62523a,inset -8px 1px 0 #0d1010,0 0 15px #0008; }
+.arte-arco::before { content:''; position:absolute; inset:11px 9px 0; border:3px solid #7b684d66; border-bottom:0; border-radius:inherit; }
+.arte-arco::after { content:''; position:absolute; top:-13px; left:calc(50% - 48px); width:96px; height:58px; background:linear-gradient(90deg,#25241e,#5c503b,#25241e); border:2px solid #716044; border-radius:0 0 35% 35%; }
+.arte-luz-piso { pointer-events:none; background:radial-gradient(ellipse at 50% 48%,#c4a97020,transparent 67%); }
+.arte-sombra-janela { pointer-events:none; background:repeating-linear-gradient(78deg,transparent 0 150px,#05080966 151px 181px),linear-gradient(90deg,transparent,#a8b8b01a,transparent); opacity:.65; }
+.arte-console,.arte-espelho { pointer-events:none; }
+.arte-espelho { border:13px solid #514433; border-radius:48% 48% 5% 5% / 27% 27% 4% 4%; background:linear-gradient(125deg,#82918b,#1c2c2b 31%,#080d0e 61%,#414943); box-shadow:0 0 0 3px #96856977,inset 0 0 34px #000,8px 16px 20px #0009; }
+.arte-espelho::before { content:''; position:absolute; inset:5px; border:2px solid #aea18166; border-radius:inherit; }
+.arte-vidro { inset:0; overflow:hidden; border-radius:inherit; background:repeating-linear-gradient(116deg,transparent 0 48px,#b6beb60b 49px 50px); }
+.arte-reflexo { position:absolute; left:38%; top:20%; width:22%; height:65%; opacity:.18; border-radius:50% 50% 0 0; background:linear-gradient(#ccc4aa,transparent); }
+.parede .lambri { box-shadow:0 -3px 0 #0c0e0b,inset 0 30px 70px #06080799; }
+.teto-pedaco { background:repeating-linear-gradient(0deg,#101815 0 360px,#26291e 360px 387px,#71614466 387px 393px,#111611 393px 400px); }
+.poca-luz { background:radial-gradient(ellipse,rgba(var(--luz),.23),transparent 68%); }
+.j-vela,.j-vela2 { animation:arte-vela 9s ease-in-out infinite; }
+.piscar,.piscar2 { animation:arte-vela 11s ease-in-out infinite; }
+@keyframes arte-vela { 0%,100%{opacity:1} 43%{opacity:.82} 57%{opacity:.94} 81%{opacity:.87} }
+/* O apagão conserva o evento, mas sem uma sequência de flashes rápidos. */
+body.apagao #palco { filter:brightness(.65)!important; }
+body.apagao #vinheta { background:#0005; transition:background .9s; }
+.rosto-espelho { background:linear-gradient(135deg,#73847a,#172222 43%,#070c0c); border-color:#827050; box-shadow:0 12px 70px #000a,inset 0 0 25px #000; }
+.rosto-espelho svg { opacity:.7; }
+/* A fotografia da gravura é textura em cache, em vez de turbulence em tela inteira. */
+html[data-reduzir=true] *,html[data-reduzir=true] *::before,html[data-reduzir=true] *::after { animation:none!important; transition-duration:.01ms!important; }
+html[data-reduzir=true] .j-loira { opacity:.28; }
+html[data-reduzir=true] .j-feixe,html[data-reduzir=true] .j-vaca { opacity:0; }
+body.casa-oculta #palco *,body.dossie-aberto #palco * { animation-play-state:paused!important; }
+/* O jardim continua montado para o retorno, mas não anima fora de vista. */
+body.dentro .j-palco *,body.dentro .j-palco *::before,body.dentro .j-palco *::after { animation-play-state:paused!important; }
+@media (prefers-reduced-motion:reduce) {
+ .arte-bruma-camada,.j-vela,.j-vela2,.piscar,.piscar2 { animation:none; }
+ .j-loira { opacity:.28;animation:none; }
+ body.apagao #vinheta { background:transparent; }
+}
+@media(max-width:900px),(max-height:600px) {
+ #topo { grid-template-columns:minmax(0,1fr) 44px 44px; gap:4px 8px; }
+ #topo #btn-movimento { grid-column:2;grid-row:1; }
+ #topo .perfil-acesso { grid-column:3;grid-row:1; }
+}

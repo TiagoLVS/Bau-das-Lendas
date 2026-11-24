@@ -29,7 +29,7 @@ try {
     if(s.demonstracaoCompleta){terminou=true;break}
   }
   assert.ok(terminou,'A sequência autônoma deve terminar')
-  assert.deepEqual(vistos,['olhos','espelho','saci','lobo','boitata'])
+  assert.deepEqual(vistos,['espelho','lobo','saci','alta','boitata'])
   assert.deepEqual(erros,[])
   const final=await page.evaluate(()=>window.__bauAtmosfera.inspecionar())
   assert.ok(final.cameraZ < -25&&final.cameraZ > -36,'Travessia compacta de cinco baias')

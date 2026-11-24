@@ -61,7 +61,7 @@ Bau.planta = (function () {
       const prof = C.PRIMEIRO + i * C.PASSO;
       const r = el('rect', { x: xp, y: y(prof) - 7, width: 5, height: 14, fill: '#4a453c' }, g);
       g.addEventListener('click', () => C.irPara(i));
-      g.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') C.irPara(i); });
+      g.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); C.irPara(i); } });
       cartas.push(r);
     });
 
@@ -75,11 +75,17 @@ Bau.planta = (function () {
 
   function marcarVisto(i) { vistos.add(i); }
 
+  // Minimapa: só toca no DOM quando algo mudou (antes regravava 60 retângulos
+  // e três textos a cada quadro, mesmo parado).
+  const ultimo = { voce: '', cores: [], ala: '', vistos: '', portas: '', cor: null };
+  function texto(id, valor, chave) { if (ultimo[chave] !== valor) { ultimo[chave] = valor; document.getElementById(id).textContent = valor; } }
   function atualizar() {
     const C = Bau.corredor, e = C.estado;
-    voce.setAttribute('transform', `translate(90 ${y(e.camZ).toFixed(1)}) rotate(${(e.yaw + e.giro).toFixed(1)})`);
+    const tv = `translate(90 ${y(e.camZ).toFixed(1)}) rotate(${(e.yaw + e.giro).toFixed(1)})`;
+    if (tv !== ultimo.voce) { ultimo.voce = tv; voce.setAttribute('transform', tv); }
     cartas.forEach(function (r, i) {
-      r.setAttribute('fill', i === e.i && e.dentro ? '#d9a24a' : vistos.has(i) ? '#a69e90' : '#4a453c');
+      const cor = i === e.i && e.dentro ? '#d9a24a' : vistos.has(i) ? '#a69e90' : '#4a453c';
+      if (ultimo.cores[i] !== cor) { ultimo.cores[i] = cor; r.setAttribute('fill', cor); }
     });
     const abertas = Bau.decor.portas;
     let n = 0;
@@ -87,14 +93,14 @@ Bau.planta = (function () {
       const obj = abertas.find(o => o.cfg.id === p.id);
       const aberta = obj && obj.aberta;
       if (aberta) n++;
-      p.r.setAttribute('fill', aberta ? '#e0452a' : '#8a6a3a');
+      const corPorta = aberta ? '#e0452a' : '#8a6a3a'; if (p.cor !== corPorta) { p.cor = corPorta; p.r.setAttribute('fill', corPorta); }
     });
     const z = C.zonaEm(e.camZ + 650); // a ala da carta que você está vendo
-    const ala = document.getElementById('planta-ala');
-    if (ala.textContent !== z.nome) ala.textContent = z.nome;
-    document.getElementById('planta-vistos').textContent = `CARTAS ${vistos.size}/${Bau.lendas.length}`;
-    document.getElementById('planta-portas').textContent = n ? '● PORTA ABERTA' : 'PORTAS ' + portas.length;
-    document.getElementById('planta-portas').style.color = n ? '#e0452a' : '';
+    texto('planta-ala', z.nome, 'ala');
+    texto('planta-vistos', `CARTAS ${vistos.size}/${Bau.lendas.length}`, 'vistos');
+    texto('planta-portas', n ? '● PORTA ABERTA' : 'PORTAS ' + portas.length, 'portas');
+    const cor = n ? '#e0452a' : '';
+    if (cor !== ultimo.cor) { ultimo.cor = cor; document.getElementById('planta-portas').style.color = cor; }
     requestAnimationFrame(atualizar);
   }
 

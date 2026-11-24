@@ -10,13 +10,17 @@
   type ReactNode,
 } from 'react'
 
-import World3D, { type FaseMundo } from './experience/World3D'
+import type { FaseMundo } from './experience/World3D'
 import { lendas } from './data/lendas'
 import Portais, { URL_RA } from './Portais'
 import Conta from './Conta'
 import LegendImage from './LegendImage'
+// @ts-expect-error módulo de foco compartilhado com HTML
+import { containDialogFocus } from '../public/dialog-focus.js'
 
 const Album = lazy(() => import('./Album'))
+// Three.js (~600 kB) só é baixado depois que a interface já está visível.
+const World3D = lazy(() => import('./experience/World3D'))
 
 const Laboratorio =
   import.meta.env.DEV &&
@@ -98,6 +102,18 @@ export default function App() {
 
   const temporizador = useRef<number>(0)
   const menuRef = useRef<HTMLButtonElement>(null)
+  const siteRef = useRef<HTMLElement>(null)
+  const headerRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const header = headerRef.current
+    if (!header) return
+    const measure = () => siteRef.current?.style.setProperty('--menu-altura', `${header.getBoundingClientRect().height}px`)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(header)
+    return () => observer.disconnect()
+  }, [])
 
   const lenda = lendas[indice]
 
@@ -193,6 +209,9 @@ export default function App() {
             ? evento.deltaY * window.innerHeight
             : evento.deltaY
 
+      const area = evento.target instanceof Element ? evento.target.closest('.limiar') : null
+      if (area && area.scrollHeight > area.clientHeight + 1 &&
+        (pixels > 0 ? area.scrollTop + area.clientHeight < area.scrollHeight - 1 : area.scrollTop > 0)) return
       evento.preventDefault()
 
       if (cena === 'entrada') {
@@ -266,8 +285,34 @@ export default function App() {
     }
   }, [grimorio, painel, menuAberto])
 
-  const fecharPainel = useCallback(() => setPainel(null), [])
-  const fecharGrimorio = useCallback(() => setGrimorio(false), [])
+  const devolverFocoAoConteudo = useCallback(() => {
+    requestAnimationFrame(() => {
+      const menu = menuRef.current
+      const alvo = menu?.getClientRects().length
+        ? menu
+        : document.querySelector<HTMLButtonElement>('.menu .marca')
+      alvo?.focus({ preventScroll: true })
+    })
+  }, [])
+  const fecharPainel = useCallback(() => {
+    setPainel(null)
+    devolverFocoAoConteudo()
+  }, [devolverFocoAoConteudo])
+  const fecharGrimorio = useCallback(() => {
+    setGrimorio(false)
+    devolverFocoAoConteudo()
+  }, [devolverFocoAoConteudo])
+
+  const fecharDossie = useCallback(() => {
+    setDossieAberto(false)
+    devolverFocoAoConteudo()
+  }, [devolverFocoAoConteudo])
+
+  useEffect(() => {
+    if (!painel && !dossieAberto) return
+    const dialog = siteRef.current?.querySelector<HTMLElement>('.dossie[role="dialog"], .painel[role="dialog"]')
+    if (dialog) return containDialogFocus(dialog, { onEscape: dossieAberto ? fecharDossie : fecharPainel })
+  }, [painel, dossieAberto, fecharDossie, fecharPainel])
 
   const abrirGrimorio = useCallback(() => {
     setPainel(null)
@@ -293,11 +338,16 @@ export default function App() {
 
   return (
     <main
+      ref={siteRef}
       className={`site cena-${cena}${
         demonstracao ? ' demonstracao-assombrada' : ''
       }`}
       onTouchStart={(evento) => {
-        toqueInicial.current = evento.touches[0]?.clientY ?? null
+        const target = evento.target instanceof Element ? evento.target : null
+        const area = target?.closest('.limiar')
+        const reading = area && area.scrollHeight > area.clientHeight + 1
+        toqueInicial.current = target?.closest('a,button,input,textarea,select') || reading
+          ? null : evento.touches[0]?.clientY ?? null
         toqueAnterior.current = toqueInicial.current
       }}
       onTouchMove={(evento) => {
@@ -341,6 +391,7 @@ export default function App() {
       )}
 
       <div className="world-layer">
+        <Suspense fallback={<div className="world3d world3d--carregando" aria-hidden="true" />}>
         <World3D
           indiceAtivo={indice}
           deslocamento={deslocamento}
@@ -350,6 +401,7 @@ export default function App() {
           aoNavegar={definirDeslocamento}
           aoAbrirDossie={abrirDossieDoRegistro}
         />
+        </Suspense>
       </div>
 
       <div className="veu-escuro" aria-hidden="true" />
@@ -357,7 +409,7 @@ export default function App() {
       <div className="film-grain" aria-hidden="true" />
       <div className="travessia-veu" aria-hidden="true" />
 
-      <header className="menu">
+      <header className="menu" ref={headerRef}>
         <button
           type="button"
           className="marca"
@@ -388,58 +440,12 @@ export default function App() {
           className={menuAberto ? 'aberto' : ''}
           aria-label="Principal"
         >
-          <button
-            type="button"
-            aria-current={
-              travessia && !painel && !grimorio
-                ? 'page'
-                : undefined
-            }
-            onClick={() => atravessar()}
-          >
-            Explorar
-          </button>
+          <a href="/" aria-current={!painel && !grimorio ? 'page' : undefined}>Início</a>
+          <a href="/?portais=1" aria-current={painel === 'portais' ? 'page' : undefined}>Explorar</a>
+          <a href="/?album=1" aria-current={grimorio ? 'page' : undefined}>Álbum</a>
 
-          <button
-            type="button"
-            aria-current={painel === 'lendas' ? 'page' : undefined}
-            onClick={() => abrirPainel('lendas')}
-          >
-            Lendas
-          </button>
-
-          <button
-            type="button"
-            aria-current={grimorio ? 'page' : undefined}
-            onClick={abrirGrimorio}
-          >
-            Grimório
-          </button>
-
-          <a href="/casa/cartas.html">
-            Cartas
-          </a>
-
-          <button
-            type="button"
-            aria-current={painel === 'portais' ? 'page' : undefined}
-            onClick={() => abrirPainel('portais')}
-          >
-            Portais
-          </button>
-
-          <button
-            type="button"
-            aria-current={painel === 'conta' ? 'page' : undefined}
-            onClick={() => abrirPainel('conta')}
-          >
-            Minha conta
-          </button>
-
-          <a className="menu-ra" href={URL_RA}>
-            Invocar em RA <span aria-hidden="true">↗</span>
-          </a>
-
+        </nav>
+        <a className="perfil-acesso" href="/?conta=1" aria-label="Perfil" aria-current={painel === 'conta' ? 'page' : undefined}>Perfil</a>
           <button
             type="button"
             className="menu-movimento"
@@ -456,9 +462,11 @@ export default function App() {
               Movimento reduzido: {reduzir ? 'sim' : 'não'}
             </span>
           </button>
-        </nav>
       </header>
 
+      {!painel && !grimorio && <div className="inicio-contexto" aria-label="Recursos do Início">
+        <button className="botao-discreto" onClick={() => abrirPainel('lendas')}>Lendas e dossiês</button>
+      </div>}
       {cena !== 'travessia' && (
         <section
           className="limiar"
@@ -605,7 +613,7 @@ export default function App() {
             {dossieAberto && (
         <div
           className="dossie-veu"
-          onClick={() => setDossieAberto(false)}
+          onClick={fecharDossie}
         >
           <article
             className="dossie"
@@ -622,7 +630,7 @@ export default function App() {
               <button
                 type="button"
                 className="botao-discreto"
-                onClick={() => setDossieAberto(false)}
+                onClick={fecharDossie}
                 autoFocus
               >
                 Fechar <span aria-hidden="true">×</span>
@@ -700,7 +708,7 @@ export default function App() {
               <button
                 type="button"
                 className="botao-ritual"
-                onClick={() => setDossieAberto(false)}
+                onClick={fecharDossie}
               >
                 Continuar a travessia →
               </button>

@@ -47,7 +47,7 @@
   font: 500 11px 'DM Sans', system-ui, sans-serif;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: #4b565d;
+  color: #7a858b;
 }
 
 .grimorio-topo h2 {
@@ -143,7 +143,7 @@
   font: 500 11px 'DM Sans', system-ui, sans-serif;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #4b565d;
+  color: #848d92;
 }
 
 /* Capas de couro */
@@ -547,3 +547,58 @@
 html[data-reduzir='true'] .grimorio,
 html[data-reduzir='true'] .inspecao,
 html[data-reduzir='true'] .inspecao-face { animation: none; }
+
+/* Em telas pequenas, o livro usa o fluxo normal e os controles podem rolar. */
+@media (max-width:700px), (max-height:600px) {
+  .grimorio { overflow-y:auto; }
+  .grimorio-topo, .grimorio-progresso, .grimorio-aviso, .grimorio-indicacao { flex-shrink:0; }
+  .grimorio-mesa { flex:none; display:block; padding-block:16px 52px; }
+  .grimorio-livro { width:min(100%,420px); margin-inline:auto; }
+}
+
+/* Etapa 10: controles fora da área artística, inclusive em paisagem. */
+.grimorio-fechar, .inspecao-fechar, [data-flipbook-control] { min-height:44px; min-width:44px; flex-shrink:0; }
+.grimorio-galeria a, .grimorio-indicacao a { display:inline-flex; align-items:center; min-height:44px; pointer-events:auto; }
+.inspecao-carta { height:min(100%,780px); }
+.inspecao-topo { flex-shrink:0; }
+.inspecao-face .illustrated-card-container { height:100%; min-height:0; container-type:size; }
+.inspecao-face .carta-x { display:grid; grid-template-rows:minmax(0,1fr) auto auto; height:100%; min-height:0; }
+.inspecao-face .cx-inclina { justify-self:center; width:auto; height:100%; max-height:min(510px,calc(100cqw * 3 / 2)); aspect-ratio:2/3; }
+.inspecao-face .cx-legenda { flex-wrap:wrap; min-width:0; }
+.inspecao-face .cx-legenda span { white-space:normal; overflow-wrap:anywhere; }
+.grimorio { padding-top:max(14px,env(safe-area-inset-top)); padding-bottom:max(14px,env(safe-area-inset-bottom)); }
+@media (max-height:500px) and (orientation:landscape) {
+  .inspecao-carta { width:min(760px,100%); }
+  .inspecao-face .carta-x { width:100%; grid-template-columns:auto minmax(0,1fr); grid-template-rows:auto minmax(0,1fr); column-gap:20px; align-items:center; }
+  .inspecao-face .cx-inclina { grid-column:1; grid-row:1/3; max-height:100%; }
+  .inspecao-face .cx-legenda { grid-column:2; grid-row:1; }
+  .inspecao-face .cx-toggle { grid-column:2; grid-row:2; }
+}
+.inspecao { position:fixed; padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left)); }
+/* O estado final já coincide com o CSS base. Liberar o fill evita que a
+   animação do livro mantenha a inspeção fixa presa à rolagem do Álbum. */
+.grimorio { animation-fill-mode:backwards; }
+/* As folhas não desenhadas pelo motor continuam montadas, mas suas medidas
+   antigas não devem ampliar a rolagem. --shown é definido antes de cada giro. */
+.grimorio-livro .stf__item:not(.--shown) { display:none; }
+
+/* Revisão visual R2 ---------------------------------------------------------
+   Livro fechado: a capa ocupa só a metade direita do spread; desloca-se o livro
+   para que a capa (ou contracapa) fique centrada e volte ao abrir. */
+.grimorio-livro > * { transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+.grimorio-livro.na-capa > * { transform: translateX(-25%); }
+.grimorio-livro.na-contracapa > * { transform: translateX(25%); }
+@media (prefers-reduced-motion: reduce) { .grimorio-livro > * { transition: none; } }
+.grimorio-faixa { position: relative; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; column-gap: 24px;
+  width: min(100%, 1000px); margin: 10px auto 4px; }
+.grimorio-faixa .grimorio-progresso { width: auto; margin: 0; flex: 1 1 320px; }
+.grimorio-faixa .grimorio-galeria { margin: 0; font-size: 13px; }
+.grimorio-galeria a { color: #a99f8c; text-underline-offset: 4px; text-decoration-color: #74343d; }
+.grimorio-galeria a:hover, .grimorio-galeria a:focus-visible { color: #e2d6bf; }
+/* O verso educativo é papel claro: não herda a cor do título do painel escuro. */
+.inspecao-face .educational-back h3 { color: #2a1f19; font: 600 clamp(24px, 5vw, 30px) / 1.05 'Cormorant Garamond', Georgia, serif; text-align: left; margin: 0 0 6px; }
+/* Os controles de folha ficam centrados mesmo com o livro deslocado. */
+.grimorio-livro [data-flipbook-controls] { transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+.grimorio-livro.na-capa [data-flipbook-controls] { transform: translateX(25%); }
+.grimorio-livro.na-contracapa [data-flipbook-controls] { transform: translateX(-25%); }
+@media (prefers-reduced-motion: reduce) { .grimorio-livro [data-flipbook-controls] { transition: none; } }

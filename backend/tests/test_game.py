@@ -119,7 +119,7 @@ def test_seed_exact_idempotent_preserves_data_and_migration(engine, client, tmp_
             seed_catalog(db, invalid)
 
 
-def test_first_second_uniform_candidates_and_idempotency(client, monkeypatch):
+def test_first_second_uniform_candidates_and_idempotency(client, monkeypatch, reward_clock):
     register(client)
     counts = []
     def choose(count):
@@ -127,6 +127,7 @@ def test_first_second_uniform_candidates_and_idempotency(client, monkeypatch):
         return count - 1
     monkeypatch.setattr('app.services.collection.secrets.randbelow', choose)
     first = draw(client).json()
+    reward_clock[0] += timedelta(days=1)
     second = draw(client, 'second').json()
     assert counts == [60, 59]
     assert first['legend']['numero'] == 60
@@ -156,13 +157,16 @@ def test_album_locked_and_independent_users(client):
     assert draw(client).json()['progress']['obtained'] == 1
 
 
-def test_sixty_draws_complete_and_unique(client, engine):
+def test_sixty_draws_complete_and_unique(client, engine, reward_clock):
     register(client)
-    results = [draw(client, f'draw-{i}').json() for i in range(60)]
+    results = []
+    for i in range(60):
+        results.append(draw(client, f'draw-{i}').json())
+        reward_clock[0] += timedelta(days=1)
     assert len({r['legend']['id'] for r in results}) == 60
     assert results[-1]['complete'] and results[-1]['remaining'] == 0
     full = draw(client, 'full').json()
-    assert full['legend'] is None and full['complete']
+    assert full['legend'] is not None and full['complete'] and full['is_duplicate']
     assert draw(client, 'full').json() == full
     assert client.get('/api/album/progress').json() == {
         'total': 60, 'obtained': 60, 'remaining': 0, 'complete': True}
@@ -218,12 +222,16 @@ def test_concurrent_draws_postgresql(client, app, engine, same_key):
         with TestClient(app, headers=HEADERS, cookies=cookies) as independent:
             barrier.wait(timeout=20)
             response = draw(independent, 'shared' if same_key else f'parallel-{index}')
-            assert response.status_code == 200, response.text
-            return response.json()
+            assert response.status_code in (200, 409), response.text
+            return response.status_code, response.json()
     with ThreadPoolExecutor(max_workers=8) as executor:
         results = list(executor.map(send, range(8)))
-    expected = 1 if same_key else 8
-    assert len({r['legend']['id'] for r in results}) == expected
+    successful = [body for code, body in results if code == 200]
+    assert len(successful) == (8 if same_key else 1)
+    assert len({body['legend']['id'] for body in successful}) == 1
     if same_key:
-        assert all(r == results[0] for r in results)
-    assert client.get('/api/album/progress').json()['obtained'] == expected
+        assert all(body == successful[0] for body in successful)
+    else:
+        assert sum(code == 409 for code, _ in results) == 7
+        assert all(body['detail']['code'] == 'DAILY_REWARD_USED' for code, body in results if code == 409)
+    assert client.get('/api/album/progress').json()['obtained'] == 1

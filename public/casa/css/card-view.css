@@ -23,3 +23,36 @@
 .carta .carta-arte-ilustrada { width:100%; height:100%; object-fit:contain; display:block; }
 .carta .carta-janela:has(.carta-arte-ilustrada) { min-height:0; background:#15110e; }
 @media(prefers-reduced-motion:reduce) { .carta-x,.carta-x * { animation:none!important; transition:none!important; } }
+/* Frente artística intacta; apenas o verso recebe texto e rolagem. */
+.carta-x .cx-virador { transition:transform .55s ease; }
+.educational-back { box-sizing:border-box; width:100%; height:100%; overflow:auto; overscroll-behavior:contain; touch-action:pan-y; padding:18px; background:linear-gradient(#e0d0adf2,#c3ad86f5); color:#29211c; font:16px/1.5 Georgia,serif; text-align:left; overflow-wrap:anywhere; scrollbar-width:thin; }
+.educational-back h3 { font:600 24px/1.15 Georgia,serif; margin:0 0 12px; }
+.educational-back h4 { font:600 17px/1.3 Georgia,serif; margin:18px 0 6px; }
+.educational-back p { margin:0 0 12px; white-space:pre-line; }
+.educational-back ul { padding-left:20px; }
+.cx-toggle { min-height:44px; padding:8px 14px; border:1px solid #a58b63; background:#19130f; color:#e0d0ad; font:14px Georgia,serif; cursor:pointer; }
+.cx-toggle:focus-visible,.educational-back:focus-visible { outline:2px solid #d9a24a; outline-offset:-3px; }
+.carta-x[data-face='verso'] .cx-frente { pointer-events:none; }
+.carta-x[data-face='frente'] .cx-verso { pointer-events:none; }
+html[data-reduzir='true'] .carta-x * { transition:none!important; animation:none!important; }
+.inspecao-face .carta-x { --carta-l:340px; }
+.inspecao-face { min-height:0; overflow:auto; }
+/* Revisão visual R2: verso educativo com hierarquia editorial (Álbum, Galeria e RA). */
+.educational-back { padding:20px 20px 24px; line-height:1.55;
+  background:
+    radial-gradient(ellipse at 20% 0%, #f0e3c4 0, transparent 60%),
+    linear-gradient(#e2d2af, #c9b38c); box-shadow: inset 0 0 0 1px #8a6f4a55, inset 0 0 38px #6b4d2a33; }
+.educational-back h3 { font:600 26px/1.05 'Cormorant Garamond','Instrument Serif',Georgia,serif; letter-spacing:.01em; color:#2a1f19; margin:0 0 6px; }
+.educational-back .education-origin { font:600 11px/1.4 'DM Sans','IBM Plex Mono',system-ui,sans-serif; letter-spacing:.18em; text-transform:uppercase; color:#6d3a2c; margin-bottom:4px; }
+.educational-back .education-origin + p { font-style:italic; color:#4a3b2e; padding-bottom:12px; border-bottom:1px solid #8a6f4a66; }
+.educational-back h4 { display:flex; align-items:center; gap:10px; font:600 12px/1.3 'DM Sans','IBM Plex Mono',system-ui,sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#6d3a2c; margin:20px 0 8px; }
+.educational-back h4::after { content:''; flex:1; height:1px; background:#8a6f4a66; }
+.educational-back p, .educational-back li { color:#2e251e; font-size:15.5px; }
+.educational-back li { margin-bottom:6px; }
+.educational-back li::marker { color:#8a3b2a; }
+/* Face oculta sem depender só de backface-visibility (ignorado pelo WebKit Linux
+   nos testes): troca de visibilidade na metade do giro, quando a carta está de perfil. */
+.carta-x .cx-lado { transition: visibility 0s linear .27s; }
+.carta-x[data-face='frente'] .cx-verso, .carta-x[data-face='verso'] .cx-frente { visibility: hidden; }
+@media (prefers-reduced-motion: reduce) { .carta-x .cx-lado { transition: none; } }
+html[data-reduzir='true'] .carta-x .cx-lado { transition: none; }

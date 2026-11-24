@@ -1,3 +1,5 @@
+// @ts-expect-error adaptador compartilhado com HTML e RA
+import { enrichEducationalLegend } from '../public/educational-card.js'
 import { memo, useCallback, useEffect, type ComponentProps, type Ref, useMemo, useRef, useState } from 'react'
 import HTMLFlipBook, { type BookSnapshot } from '@gullabs/react-flipbook'
 import { lendas, type Lenda } from './data/lendas'
@@ -5,6 +7,8 @@ import './album.css'
 import { api, type AlbumResult } from './api'
 import LegendImage from './LegendImage'
 import IllustratedCard from './IllustratedCard'
+// @ts-expect-error módulo de foco compartilhado com HTML
+import { containDialogFocus } from '../public/dialog-focus.js'
 
 const POR_FOLHA = 6
 const FOLHAS = Math.ceil(lendas.length / POR_FOLHA)
@@ -83,11 +87,14 @@ export default function Album({ aoFechar }: AlbumProps) {
   const [mensagem, setMensagem] = useState('Consultando sua coleção…')
   const [progresso, setProgresso] = useState<AlbumResult['progress'] | null>(null)
   const [selecionada, setSelecionada] = useState<Lenda | null>(null)
-  const [face, setFace] = useState(0)
   const [visiveis, setVisiveis] = useState<number[]>([0])
   const fecharRef = useRef<HTMLButtonElement>(null)
+  const dialogRef = useRef<HTMLElement>(null)
+  const inspectionRef = useRef<HTMLDivElement>(null)
   const mesaRef = useRef<HTMLDivElement>(null)
   const [larguraMinima, setLarguraMinima] = useState(230)
+  const cartaOpener = useRef<HTMLElement | null>(null)
+  function fecharCarta() { setSelecionada(null); requestAnimationFrame(() => { if(cartaOpener.current?.isConnected) cartaOpener.current.focus({preventScroll:true}) }) }
   const selecionadaRef = useRef<Lenda | null>(null)
   selecionadaRef.current = selecionada
 
@@ -126,12 +133,14 @@ export default function Album({ aoFechar }: AlbumProps) {
     void atualizar()
     window.addEventListener('focus', atualizar)
     window.addEventListener('bau-auth-change', atualizar)
+    window.addEventListener('bau-reward-change', atualizar)
     const aoVisivel = () => { if (document.visibilityState === 'visible') void atualizar() }
     document.addEventListener('visibilitychange', aoVisivel)
     return () => {
       active = false
       window.removeEventListener('focus', atualizar)
       window.removeEventListener('bau-auth-change', atualizar)
+      window.removeEventListener('bau-reward-change', atualizar)
       document.removeEventListener('visibilitychange', aoVisivel)
     }
   }, [])
@@ -141,17 +150,24 @@ export default function Album({ aoFechar }: AlbumProps) {
     const aoTeclar = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return
       e.stopPropagation()
-      if (selecionadaRef.current) setSelecionada(null)
+      if (selecionadaRef.current) fecharCarta()
       else aoFechar()
     }
     window.addEventListener('keydown', aoTeclar, true)
     return () => window.removeEventListener('keydown', aoTeclar, true)
   }, [aoFechar])
 
+  useEffect(() => {
+    if (dialogRef.current) return containDialogFocus(dialogRef.current)
+  }, [])
+  useEffect(() => {
+    if (selecionada && inspectionRef.current) return containDialogFocus(inspectionRef.current)
+  }, [selecionada])
+
   const abrirCarta = useMemo(
     () => (lenda: Lenda) => {
+      cartaOpener.current=document.activeElement as HTMLElement
       setSelecionada(descobertas.get(lenda.id) ?? null)
-      setFace(0)
     },
     [descobertas],
   )
@@ -202,7 +218,7 @@ export default function Album({ aoFechar }: AlbumProps) {
   const tamanho = progresso?.total ?? lendas.length
 
   return (
-    <section className="grimorio" role="dialog" aria-modal="true" aria-label="Grimório dos Esquecidos">
+    <section ref={dialogRef} className="grimorio" role="dialog" aria-modal="true" aria-label="Grimório dos Esquecidos">
       <div className="grimorio-vinheta" aria-hidden="true" />
 
       <header className="grimorio-topo">
@@ -215,19 +231,22 @@ export default function Album({ aoFechar }: AlbumProps) {
         </button>
       </header>
 
-      <div className="grimorio-progresso" aria-live="polite">
-        <strong>
-          {progresso ? `${total}/${tamanho}` : '—/60'}
-        </strong>
-        <span className="grimorio-trilho" aria-hidden="true">
-          <i style={{ width: `${(total / tamanho) * 100}%` }} />
-        </span>
-        <span>{total === 0 ? 'Nenhum registro descoberto' : `${total === 1 ? 'registro descoberto' : 'registros descobertos'}`}</span>
+      <div className="grimorio-faixa">
+        <div className="grimorio-progresso" aria-live="polite">
+          <strong>
+            {progresso ? `${total}/${tamanho}` : '—/60'}
+          </strong>
+          <span className="grimorio-trilho" aria-hidden="true">
+            <i style={{ width: `${(total / tamanho) * 100}%` }} />
+          </span>
+          <span>{total === 0 ? 'Nenhum registro descoberto' : `${total === 1 ? 'registro descoberto' : 'registros descobertos'}`}</span>
+        </div>
+        <p className="grimorio-galeria"><a href="/casa/cartas.html">Galeria pública · ver ilustrações sem alterar sua coleção</a></p>
       </div>
       {mensagem && <p className="grimorio-aviso" role="status">{mensagem} <a href="/?conta=1&retorno=album">Conta</a></p>}
 
       <div className="grimorio-mesa" ref={mesaRef}>
-        <div className="grimorio-livro">
+        <div className={`grimorio-livro${onde === 'Capa' ? ' na-capa' : onde === 'Contracapa' ? ' na-contracapa' : ''}`}>
           <HTMLFlipBook
             width={360}
             height={520}
@@ -263,8 +282,9 @@ export default function Album({ aoFechar }: AlbumProps) {
       </p>
 
       {selecionada && (
-        <div className="inspecao" onClick={() => setSelecionada(null)}>
+        <div className="inspecao" onClick={fecharCarta}>
           <div
+            ref={inspectionRef}
             className="inspecao-carta"
             role="dialog"
             aria-modal="true"
@@ -273,78 +293,15 @@ export default function Album({ aoFechar }: AlbumProps) {
           >
             <div className="inspecao-topo">
               <small>
-                Registro {tres(selecionada.numero)} · Face {face + 1} de 3
+                Registro {tres(selecionada.numero)} · Frente e verso
               </small>
-              <button type="button" className="inspecao-fechar" onClick={() => setSelecionada(null)} autoFocus>
+              <button type="button" className="inspecao-fechar" onClick={fecharCarta} autoFocus>
                 Fechar <span aria-hidden="true">×</span>
               </button>
             </div>
 
-            <div className="inspecao-face" key={`${selecionada.id}-${face}`}>
-              {face === 0 && (
-                <>
-                  <h3>{selecionada.nome}</h3>
-                  <div className="inspecao-arte">
-                    {selecionada.imagem ? (
-                      <IllustratedCard legend={selecionada} />
-                    ) : (
-                      <span aria-hidden="true">✧</span>
-                    )}
-                  </div>
-                  <p className="inspecao-origem">{selecionada.origem}</p>
-                  <dl className="inspecao-atributos">
-                    <div>
-                      <dt>Ameaça</dt>
-                      <dd>{selecionada.ameaca ?? '—'}{selecionada.ameaca !== null && <small>/100</small>}</dd>
-                    </div>
-                    <div>
-                      <dt>Encontro</dt>
-                      <dd>{selecionada.encontro ?? '—'}{selecionada.encontro !== null && <small>/10</small>}</dd>
-                    </div>
-                  </dl>
-                </>
-              )}
-
-              {face === 1 && (
-                <>
-                  <h3>O relato</h3>
-                  <div className="inspecao-historia">
-                    {selecionada.historia.split(/\n\n+/).map((p, i) => (
-                      <p key={i}>{p}</p>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {face === 2 && (
-                <div className="inspecao-verso">
-                  <span aria-hidden="true">◈</span>
-                  <h3>
-                    Baú
-                    <br />
-                    das Lendas
-                  </h3>
-                  <p>O esquecimento é a última morte.</p>
-                </div>
-              )}
-            </div>
-
-            <div className="inspecao-controles">
-              <div className="inspecao-pontos" role="group" aria-label="Faces da carta">
-                {[0, 1, 2].map(n => (
-                  <button
-                    type="button"
-                    key={n}
-                    className={n === face ? 'ativo' : ''}
-                    aria-label={`Face ${n + 1}`}
-                    aria-pressed={n === face}
-                    onClick={() => setFace(n)}
-                  />
-                ))}
-              </div>
-              <button type="button" className="inspecao-virar" onClick={() => setFace(f => (f + 1) % 3)}>
-                Virar carta ↻
-              </button>
+            <div className="inspecao-face">
+              <IllustratedCard legend={enrichEducationalLegend(selecionada,lendas)} />
             </div>
           </div>
         </div>

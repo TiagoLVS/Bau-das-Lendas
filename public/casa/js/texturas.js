@@ -449,5 +449,13 @@ Bau.texturas = (function () {
     return c.toDataURL('image/jpeg', 0.84);
   }
 
-  return { chao, lambri, papelParede, estampa };
+  const raiz = '/casa/img/cenario/texturas';
+  const tipos = new Set(['saguao','brasil','japao','china','india','filipinas']);
+  return {
+    chao: () => raiz + '/assoalho.jpg',
+    lambri: () => raiz + '/lambri.jpg',
+    papelParede,
+    estampa: tipo => tipos.has(tipo) ? raiz + '/parede-' + tipo + '.jpg' : estampa(tipo),
+    originais: { chao, lambri, papelParede, estampa },
+  };
 })();

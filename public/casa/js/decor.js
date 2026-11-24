@@ -89,14 +89,14 @@ Bau.decor = (function () {
     p.aberta = true; p.nunca = false; algumaAberta = true;
     if (p.cfg.estilo === 'shoji') { // antes de abrir, uma sombra passa atrás do papel
       p.el.classList.add('sombra');
-      setTimeout(() => { p.el.classList.remove('sombra'); p.el.classList.add('aberta'); Bau.som.rangido(true); }, 1500);
+      Bau.ciclo.depois(() => { p.el.classList.remove('sombra'); p.el.classList.add('aberta'); Bau.som.rangido(true); }, 1500);
     } else {
       p.el.classList.add('aberta');
       Bau.som.rangido();
     }
-    setTimeout(function () {
+    Bau.ciclo.depois(function () {
       p.el.classList.remove('aberta');
-      setTimeout(function () { p.aberta = false; algumaAberta = false; Bau.som.batida(); }, 900);
+      Bau.ciclo.depois(function () { p.aberta = false; algumaAberta = false; Bau.som.batida(); }, 900);
       p.ate = performance.now() + 14000;
     }, 4200 + Math.random() * 1800);
   }
