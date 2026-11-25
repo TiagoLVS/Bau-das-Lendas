@@ -6,7 +6,7 @@ export const legendImages = [
     "nome": "Loira do Banheiro",
     "alt": "Carta ilustrada de Loira do Banheiro",
     "src": "/casa/img/cartas/loira.jpg",
-    "srcSet": "",
+    "srcSet": "/lendas/loira-do-banheiro-carta-320.webp 320w, /lendas/loira-do-banheiro-carta-480.webp 480w, /lendas/loira-do-banheiro-carta-640.webp 640w, /casa/img/cartas/loira.jpg 768w",
     "source": "public/casa/img/cartas/loira.jpg",
     "sourceSha256": "179b9ab5e0ba03f0c05aee18101eccb7386e8a7effb6b555ae00591388c01452",
     "crop": null
@@ -17,7 +17,7 @@ export const legendImages = [
     "nome": "A Maldição de Kayako Saeki",
     "alt": "Carta ilustrada de A Maldição de Kayako Saeki",
     "src": "/casa/img/cartas/kayako.jpg",
-    "srcSet": "",
+    "srcSet": "/lendas/a-maldicao-de-kayako-saeki-carta-320.webp 320w, /lendas/a-maldicao-de-kayako-saeki-carta-480.webp 480w, /lendas/a-maldicao-de-kayako-saeki-carta-640.webp 640w, /casa/img/cartas/kayako.jpg 768w",
     "source": "public/casa/img/cartas/kayako.jpg",
     "sourceSha256": "fcbc454b0594d80e9f5a6b9d7db849cd1f6e7b040f5e4987fc933e95656f047f",
     "crop": null
@@ -28,7 +28,7 @@ export const legendImages = [
     "nome": "Kiyohime",
     "alt": "Carta ilustrada de Kiyohime",
     "src": "/casa/img/cartas/kiyohime.jpg",
-    "srcSet": "",
+    "srcSet": "/lendas/kiyohime-carta-320.webp 320w, /lendas/kiyohime-carta-480.webp 480w, /lendas/kiyohime-carta-640.webp 640w, /casa/img/cartas/kiyohime.jpg 768w",
     "source": "public/casa/img/cartas/kiyohime.jpg",
     "sourceSha256": "3846d36cdda208c8dbf6a0d4259a305a1de648babe529ef8feb3174b15e3a126",
     "crop": null
@@ -39,7 +39,7 @@ export const legendImages = [
     "nome": "Tamamo-no-Mae",
     "alt": "Carta ilustrada de Tamamo-no-Mae",
     "src": "/casa/img/cartas/tamamo.jpg",
-    "srcSet": "",
+    "srcSet": "/lendas/tamamo-no-mae-carta-320.webp 320w, /lendas/tamamo-no-mae-carta-480.webp 480w, /lendas/tamamo-no-mae-carta-640.webp 640w, /casa/img/cartas/tamamo.jpg 768w",
     "source": "public/casa/img/cartas/tamamo.jpg",
     "sourceSha256": "b61d84c230e6e4c84d6e8f35c0d13aa0beaef90f8712da7315420d68dd4c942b",
     "crop": null
@@ -50,7 +50,7 @@ export const legendImages = [
     "nome": "Kisaragi Station",
     "alt": "Carta ilustrada de Kisaragi Station",
     "src": "/casa/img/cartas/kisaragi.jpg",
-    "srcSet": "",
+    "srcSet": "/lendas/kisaragi-station-carta-320.webp 320w, /lendas/kisaragi-station-carta-480.webp 480w, /lendas/kisaragi-station-carta-640.webp 640w, /casa/img/cartas/kisaragi.jpg 768w",
     "source": "public/casa/img/cartas/kisaragi.jpg",
     "sourceSha256": "dfe6c09d8f1cc7c36ac62209367b3dcc6b007d204c706b8cfa19983826fc0956",
     "crop": null
@@ -61,7 +61,7 @@ export const legendImages = [
     "nome": "Hachishakusama",
     "alt": "Carta ilustrada de Hachishakusama",
     "src": "/casa/img/cartas/hachishakusama.jpg",
-    "srcSet": "",
+    "srcSet": "/lendas/hachishakusama-carta-320.webp 320w, /lendas/hachishakusama-carta-480.webp 480w, /lendas/hachishakusama-carta-640.webp 640w, /casa/img/cartas/hachishakusama.jpg 768w",
     "source": "public/casa/img/cartas/hachishakusama.jpg",
     "sourceSha256": "48d03372bde342e226800290b9b03540ea3e3771bb9df3051fffceca28c9fa4d",
     "crop": null
@@ -72,7 +72,7 @@ export const legendImages = [
     "nome": "Meng Jiangnü",
     "alt": "Carta ilustrada de Meng Jiangnü",
     "src": "/casa/img/cartas/meng-jiangnu.jpg",
-    "srcSet": "",
+    "srcSet": "/lendas/meng-jiangnu-carta-320.webp 320w, /lendas/meng-jiangnu-carta-480.webp 480w, /lendas/meng-jiangnu-carta-640.webp 640w, /casa/img/cartas/meng-jiangnu.jpg 768w",
     "source": "public/casa/img/cartas/meng-jiangnu.jpg",
     "sourceSha256": "5508fe5ccde58c97a8fb8435291824afd4b7472f048a9704840df3ae611da152",
     "crop": null
@@ -83,7 +83,7 @@ export const legendImages = [
     "nome": "Kuldhara",
     "alt": "Carta ilustrada de Kuldhara",
     "src": "/casa/img/cartas/kuldhara.jpg",
-    "srcSet": "",
+    "srcSet": "/lendas/kuldhara-carta-320.webp 320w, /lendas/kuldhara-carta-480.webp 480w, /lendas/kuldhara-carta-640.webp 640w, /casa/img/cartas/kuldhara.jpg 768w",
     "source": "public/casa/img/cartas/kuldhara.jpg",
     "sourceSha256": "d629ca7d3743ad2d580739f47ac3e2911b506726d18c12f927629290d6a592d4",
     "crop": null

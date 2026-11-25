@@ -48,6 +48,26 @@ esteja usando a porta 5175 antes de iniciar. Para testar a câmera no celular,
 use o túnel HTTPS apontando para essa porta.
 
 Para abrir novamente o último build sem reconstruí-lo, use `npm run preview`.
+
+Depois de trocar ou acrescentar uma ilustração oficial em `public/casa/img/cartas/`,
+gere as versões menores usadas no celular (requer `ffmpeg`; os originais não mudam):
+
+```sh
+node scripts/gerar-miniaturas.mjs && npm start
+```
+
+Testes rápidos sem backend (build de produção, API simulada no navegador de teste):
+
+```sh
+node --test tests/*.test.mjs
+node tests/ra-fluxo-sem-backend.mjs dist chromium
+node tests/inicio-compatibilidade.mjs dist
+node tests/mobile-entrada.mjs dist tests/artifacts/mobile/medicao.json 2
+```
+
+Requisitos no aparelho: navegador atual com JavaScript; HTTPS e câmera para a RA;
+WebGL para o baú em RA e para o 3D do Início. Sem WebGL, o Início usa um fundo
+leve e a RA explica a limitação; Álbum, Galeria, Casa e leitura continuam disponíveis.
 Depois de editar arquivos, reinicie com `npm start` para atualizar o build.
 Durante o desenvolvimento, `npm run dev` continua disponível com recarga
 automática. O preview serve para testes locais da versão de produção.

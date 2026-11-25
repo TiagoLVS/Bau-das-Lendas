@@ -62,9 +62,10 @@ const janela = (p, ms) => p.evaluate(ms => new Promise(res => {
       const j = janela(p, 1500); await p.keyboard.press(tecla); const r = await j
       registrar('Tecla 5 — apagão', r.classes.includes('apagao') ? 'APROVADO' : 'REPROVADO', `classe apagao no body: ${r.classes.includes('apagao')}`)
     } else {
-      const antes = await conta(SEL[tecla]); await p.keyboard.press(tecla); await p.waitForTimeout(2200)
-      const depois = await conta(SEL[tecla])
-      registrar(`Tecla ${tecla} — ${nomes[tecla]}`, depois > antes ? 'APROVADO' : 'REPROVADO', `${SEL[tecla]}: ${antes} → ${depois}`)
+      // Conta inclusões (não o total): efeitos automáticos antigos podem sumir na mesma janela.
+      const novos = p.evaluate(([sel, ms]) => new Promise(res => { let n = 0; const mo = new MutationObserver(l => { for (const m of l) for (const no of m.addedNodes) if (no.nodeType === 1 && (no.matches(sel) || no.querySelector?.(sel))) n++ }); mo.observe(document.body, { childList: true, subtree: true }); setTimeout(() => { mo.disconnect(); res(n) }, ms) }), [SEL[tecla], 2200])
+      await p.keyboard.press(tecla); const n = await novos
+      registrar(`Tecla ${tecla} — ${nomes[tecla]}`, n > 0 ? 'APROVADO' : 'REPROVADO', `${SEL[tecla]}: ${n} incluído(s)`)
     }
     await p.waitForTimeout(400)
   }

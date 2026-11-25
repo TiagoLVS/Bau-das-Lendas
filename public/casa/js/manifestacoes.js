@@ -1,6 +1,7 @@
 // A mesma ordem narrativa da apresentação Three.js, integrada à casa CSS 3D.
 export const MANIFESTACOES = [
-  { id:'espelho', fonte:'espelho-loira', lenda:'loira-do-banheiro', nome:'Loira do Banheiro', indice:0, duracao:5.8, espera:1.1 },
+  // Loira: só quando pedida (easter egg "loira" ×3 ou demonstração); não dispara sozinha ao explorar.
+  { id:'espelho', fonte:'espelho-loira', lenda:'loira-do-banheiro', nome:'Loira do Banheiro', indice:0, duracao:5.8, espera:1.1, somenteDemonstracao:true },
   { id:'lobo', fonte:'lobo-stumpp', lenda:'peter-stumpp', nome:'Peter Stumpp', indice:11, duracao:4.4, espera:.3 },
   { id:'saci', fonte:'saci-redemoinho', lenda:null, nome:'Saci · uma corrente de ar', indice:31, duracao:5.1, espera:.3 },
   { id:'alta', fonte:'alta-colunas', lenda:'hachishakusama', nome:'Hachishakusama', indice:5, duracao:4.5, espera:.3 },
@@ -77,7 +78,7 @@ const formas = {
 export function iniciarManifestacoes(Bau) {
  const c=Bau.corredor,params=new URLSearchParams(location.search);
  const demo=params.get('apresentacao')==='1'&&params.get('demonstracao')==='1';
- const eventos=MANIFESTACOES.map(e=>({...e,indice:e.lenda?Math.max(0,Bau.lendas.findIndex(l=>l.id===e.lenda)):e.indice}));
+ const eventos=MANIFESTACOES.filter(e=>demo||!e.somenteDemonstracao).map(e=>({...e,indice:e.lenda?Math.max(0,Bau.lendas.findIndex(l=>l.id===e.lenda)):e.indice}));
  const root=c.adicionar('div','manifestacao','left:540px;top:120px;width:360px;height:600px;display:none');root.setAttribute('aria-hidden','true');
  const legenda=document.createElement('p');legenda.id='manifestacao-legenda';legenda.setAttribute('role','status');document.body.append(legenda);
  let svg=null;

@@ -273,6 +273,8 @@ async function startExperience() {
       renderer.setAnimationLoop(()=>{
         if(disposed||document.hidden){lastFrame=performance.now();return}
         const now=performance.now();
+        // 30 quadros/s bastam: a pose do QR muda até 10×/s e o clipe usa tempo real.
+        if(now-lastFrame<31)return;
         // O clipe e a recompensa precisam usar o mesmo tempo real. Limitar o
         // delta fazia a tampa atrasar em celulares com poucos quadros.
         chestAnimation?.update(Math.max(0,(now-lastFrame)/1000));
@@ -352,8 +354,15 @@ async function startExperience() {
 
 }
 
+// Sem WebGL a RA não funciona; o restante do site continua disponível.
+function temWebGL(){try{const c=document.createElement('canvas');return Boolean(c.getContext('webgl2')||c.getContext('webgl'))}catch{return true}}
 startExperience().catch(error=>{
   console.error(error);
+  if(!temWebGL()){
+    STATUS.textContent='Este navegador não oferece gráficos 3D (WebGL), necessários para o baú em RA. Seu Grimório e a leitura das cartas continuam disponíveis: ';
+    const album=document.createElement('a');album.href='/?album=1';album.textContent='abrir o Grimório';STATUS.append(album);
+    marcarCamera('erro');$('#start').disabled=true;return;
+  }
   STATUS.textContent=`Não foi possível preparar a RA: ${error.message}`;
   const retry=$('#start');
   retry.disabled=error.status===401;

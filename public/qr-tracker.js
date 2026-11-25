@@ -7,6 +7,7 @@ export class QRTrackerThree {
   constructor({ container, decoder = globalThis.jsQR, frameTimeout = 15000 }) {
     if (typeof decoder !== 'function') throw Error('O leitor de QR não carregou. Recarregue a página.');
     this.container = container; this.decoder = decoder;
+    this.intervaloScan = 100; this.custoScan = 0;
     this.frameTimeout = frameTimeout; this.trackListeners = [];
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(60, 1, .01, 150);
@@ -90,10 +91,15 @@ export class QRTrackerThree {
             this.failCamera(new DOMException('A câmera não está fornecendo quadros. Tente novamente.','CameraFramesError'));
             return;
           }
-          if (this.video.readyState >= 2 && now-this.lastScan >= 100 && age <= 350 &&
+          if (this.video.readyState >= 2 && now-this.lastScan >= this.intervaloScan && age <= 350 &&
               (!Number.isFinite(time) || time !== this.lastDecodedTime)) {
             this.lastScan = now; this.lastDecodedTime = time;
+            const inicio = Date.now();
             try { this.scanFrame(now); } catch { this.loseTarget(); }
+            // Celular lento: se a leitura custa caro, analisa com menos frequência
+            // (100–250 ms). A resolução analisada, e o alcance do reconhecimento, não mudam.
+            this.custoScan = this.custoScan * 0.8 + (Date.now() - inicio) * 0.2;
+            this.intervaloScan = Math.min(250, Math.max(100, this.custoScan * 2.5));
           }
         }
         this.frame = requestAnimationFrame(scan);

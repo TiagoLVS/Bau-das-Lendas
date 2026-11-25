@@ -262,9 +262,14 @@ Bau.corredor = (function () {
 
   /* ---------- loop de animação ---------- */
   let antes = performance.now(), frame = 0, stopped = false, ultimaCam = '', ultimoHolo = '', palcosJardim = null;
+  // Celular (toque), economia de dados ou pouca memória: 30 quadros/s. O quadro é
+  // pulado antes de calcular dt, então câmera e caminhada mantêm a mesma velocidade.
+  const nav = navigator;
+  const intervaloMinimo = (matchMedia('(pointer: coarse)').matches || nav.connection?.saveData || (nav.deviceMemory ?? 8) <= 2) ? 31 : 0;
   function quadro(agora) {
     if (stopped) return;
     if (document.hidden || !document.getElementById('dossie').hidden) { frame = requestAnimationFrame(quadro); antes = agora; return; }
+    if (agora - antes < intervaloMinimo) { frame = requestAnimationFrame(quadro); return; }
     const decorrido = Math.max(1, agora - antes);
     const dt = Math.min(1000, decorrido); antes = agora;
 

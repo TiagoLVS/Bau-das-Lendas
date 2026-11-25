@@ -1,7 +1,15 @@
 import { educationalBack } from '../../educational-card.js'
-import { cardBack } from '../../card-art.js'
+import { cardBack, cardSrcSet, CARD_SIZES } from '../../card-art.js'
 
 let audio
+// Uma única observação de tamanho para todas as cartas: o atributo sizes passa a ser a
+// largura exibida, então a galeria baixa a versão pequena e a carta ampliada, a maior.
+const medidor = typeof ResizeObserver === 'function' ? new ResizeObserver(entradas => {
+  for (const { target, contentRect } of entradas) {
+    const largura = Math.ceil(contentRect.width)
+    if (largura > 0 && largura > (target._larguraCarta || 0)) { target._larguraCarta = largura; target.sizes = largura + 'px' }
+  }
+}) : null
 function flipSound() {
   if (globalThis.Bau?.som?.ligado === false) return
   try {
@@ -50,6 +58,8 @@ export function mountCard(legend, { unlocked = false, extra = false, preview = f
   }
   function image(path, alt, parent) {
     const img = document.createElement('img')
+    const srcset = cardSrcSet(legend.id, path)
+    if (srcset) { img.sizes = CARD_SIZES; img.srcset = srcset; medidor?.observe(img) }
     img.src = path; img.alt = alt; img.loading = 'lazy'; img.decoding = 'async'; img.draggable = false
     img.addEventListener('error', () => {
       const text = document.createElement('span'); text.className = 'cx-ausente'

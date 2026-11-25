@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { createHash } from 'node:crypto'
-import { officialArtFiles, exhibitCards } from '../public/card-art.js'
+import { officialArtFiles, exhibitCards, cardSrcSet } from '../public/card-art.js'
 
 const catalog = JSON.parse(readFileSync('public/lendas-ra.json', 'utf8'))
 if (catalog.length !== 60 || new Set(catalog.map(l => l.id)).size !== 60) throw Error('Catálogo oficial inválido.')
@@ -10,7 +10,7 @@ const manifest = catalog.map(l => {
   const source = l.imagem ? `public${l.imagem}` : ''
   if (source && !existsSync(source)) throw Error(`Imagem ausente: ${source}`)
   return { id: l.id, numero: l.numero, nome: l.nome, alt: `Carta ilustrada de ${l.nome}`, src: l.imagem,
-    srcSet: '', ...(source ? { source, sourceSha256: createHash('sha256').update(readFileSync(source)).digest('hex'), crop: null } : {}) }
+    srcSet: l.imagem && cardSrcSet(l.id, l.imagem).split(', ').every(v => existsSync('public' + v.split(' ')[0])) ? cardSrcSet(l.id, l.imagem) : '', ...(source ? { source, sourceSha256: createHash('sha256').update(readFileSync(source)).digest('hex'), crop: null } : {}) }
 })
 for (const extra of exhibitCards) if (!existsSync(`public${extra.imagem}`)) throw Error('Imagem de exposição ausente.')
 writeFileSync('public/lendas-ra.json', JSON.stringify(catalog, null, 2) + '\n')

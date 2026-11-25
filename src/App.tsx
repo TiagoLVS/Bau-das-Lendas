@@ -35,6 +35,13 @@ const numero = (valor: number) => String(valor).padStart(2, '0')
 
 const CHAVE_MOVIMENTO = 'bau-das-lendas-movimento-reduzido'
 
+// Economia de dados ativa ou até 2 GB de memória informados pelo navegador:
+// o Início usa o fundo em CSS em vez da cena 3D decorativa.
+const MODO_ECONOMICO = (() => {
+  const nav = typeof navigator === 'undefined' ? undefined : navigator as Navigator & { connection?: { saveData?: boolean }; deviceMemory?: number }
+  return Boolean(nav?.connection?.saveData) || (nav?.deviceMemory ?? 8) <= 2
+})()
+
 class Contencao extends Component<
   { children: ReactNode; aoFalhar: () => void },
   { falhou: boolean }
@@ -126,6 +133,13 @@ export default function App() {
   const sobreposto =
     dossieAberto || painel !== null || grimorio || menuAberto
 
+  // O 3D do Início só é baixado quando o Início fica visível (um link direto para
+  // Álbum/Perfil/Explorar não paga por ele) e não é usado em modo econômico.
+  const [mundo3d, setMundo3d] = useState(false)
+  useEffect(() => {
+    if (!sobreposto && !MODO_ECONOMICO) setMundo3d(true)
+  }, [sobreposto])
+
   useEffect(() => {
     document.documentElement.dataset.reduzir = String(reduzir)
 
@@ -178,13 +192,34 @@ export default function App() {
     [definirDeslocamento],
   )
 
-  // NOVA CASA OFICIAL
+  // Travessia para a casa: o Início escurece (~0,7 s) e a casa abre sob o mesmo véu
+  // (public/casa/index.html). Só opacidade e transform; com movimento reduzido é imediata.
+  const [saindo, setSaindo] = useState(false)
+  const saindoRef = useRef(false)
   const atravessar = useCallback(
     (_destino?: number) => {
-      window.location.assign('/casa/index.html')
+      if (saindoRef.current) return
+      saindoRef.current = true
+      try { sessionStorage.setItem('bau-travessia', '1') } catch { /* casa abre sem véu */ }
+      if (reduzir) { window.location.assign('/casa/index.html'); return }
+      // Aquece o cache da casa enquanto o véu cobre a tela.
+      for (const href of ['/casa/index.html', '/casa/css/estilo.css', '/casa/css/arte.css', '/casa/js/main.js']) {
+        const link = document.createElement('link'); link.rel = 'prefetch'; link.href = href; document.head.append(link)
+      }
+      setSaindo(true)
+      window.setTimeout(() => window.location.assign('/casa/index.html'), 700)
     },
-    [],
+    [reduzir],
   )
+
+  // Voltar pelo botão do navegador (cache de página) não deve encontrar o véu fechado.
+  useEffect(() => {
+    const aoMostrar = (evento: PageTransitionEvent) => {
+      if (evento.persisted) { saindoRef.current = false; setSaindo(false) }
+    }
+    window.addEventListener('pageshow', aoMostrar)
+    return () => window.removeEventListener('pageshow', aoMostrar)
+  }, [])
 
   const retornar = () => {
     window.clearTimeout(temporizador.current)
@@ -341,7 +376,7 @@ export default function App() {
       ref={siteRef}
       className={`site cena-${cena}${
         demonstracao ? ' demonstracao-assombrada' : ''
-      }`}
+      }${saindo ? ' saindo' : ''}`}
       onTouchStart={(evento) => {
         const target = evento.target instanceof Element ? evento.target : null
         const area = target?.closest('.limiar')
@@ -391,17 +426,24 @@ export default function App() {
       )}
 
       <div className="world-layer">
-        <Suspense fallback={<div className="world3d world3d--carregando" aria-hidden="true" />}>
-        <World3D
-          indiceAtivo={indice}
-          deslocamento={deslocamento}
-          fase={fase}
-          reduzirMovimento={reduzir}
-          pausado={sobreposto}
-          aoNavegar={definirDeslocamento}
-          aoAbrirDossie={abrirDossieDoRegistro}
-        />
-        </Suspense>
+        {/* Fundo leve sempre presente: aparece enquanto o 3D carrega, sem WebGL
+            ou no modo econômico; o canvas o cobre quando existe. */}
+        <div className="world3d world3d--carregando" aria-hidden="true" />
+        {mundo3d && (
+          <Contencao aoFalhar={() => {}}>
+            <Suspense fallback={null}>
+              <World3D
+                indiceAtivo={indice}
+                deslocamento={deslocamento}
+                fase={fase}
+                reduzirMovimento={reduzir}
+                pausado={sobreposto}
+                aoNavegar={definirDeslocamento}
+                aoAbrirDossie={abrirDossieDoRegistro}
+              />
+            </Suspense>
+          </Contencao>
+        )}
       </div>
 
       <div className="veu-escuro" aria-hidden="true" />

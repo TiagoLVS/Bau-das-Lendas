@@ -228,3 +228,78 @@ Observações (comportamento vigente; nada foi alterado):
 2. **Há um segundo conjunto de teclas, não listado nos atalhos do apresentador:** `a s d f g j k l ç` disparam os efeitos 1 a 9 (`main.js`). Por isso, digitar **"loira"** dispara também `l` (rachaduras) e `a` (frase na parede) a cada vez, antes do rosto no espelho. Separar as duas coisas exigiria mudar atalhos, então não foi feito sem autorização.
 3. **O gorro do Saci** fica na parede direita da ala brasileira, perto da entrada: o visitante precisa **virar a cabeça para a direita** (mouse perto da borda) nos registros 1 a 3 para vê-lo e clicar. Em registros adiante, ele fica pequeno e encoberto. Isso é igual antes e depois da otimização.
 4. Com `?lua=cheia`, o primeiro clique dentro da casa também toca o uivo (easter egg da lua cheia). Isso é esperado.
+
+## 24. Celulares de entrada (25/11/2026)
+Base: `testes-implementacao` (`adaed84`), comparada à `main` (`89485a0`), que não avançou desde a criação da branch. As melhorias da branch foram mantidas, porque a `main` tem um teste falhando, bundle inicial de 249 kB gzip e não tem recompensa diária, limite de tentativas nem as correções de WebKit e responsividade. Nada foi reescrito; as mudanças são pontuais.
+
+### O que mudou e por quê
+| Mudança | Arquivos | Motivo medido |
+|---|---|---|
+| Versões WebP 320/480/640 px das 9 cartas (2:3, sem recorte), mais `srcset` com o original de 768 px como maior opção | `scripts/gerar-miniaturas.mjs`, `public/card-art.js`, `public/casa/js/card-view.js`, `scripts/sincronizar-imagens.mjs` | A Galeria baixava 9 JPG de ~300 KB para cartas exibidas com ~175 px de largura no celular |
+| `sizes` igual à largura real da carta (um `ResizeObserver` para todas) | `card-view.js` | `sizes="auto"` levava o navegador a escolher o original; agora a grade usa a versão pequena e a carta ampliada troca sozinha pela grande |
+| RA usa o build **minificado oficial** do Three.js (mesma versão 0.160); a cópia não minificada gerada saiu de `public/vendor` | `scripts/preparar-leitor-qr.mjs`, `public/ra.html` | 1.273 → 670 KB (258 → 167 KB com gzip) |
+| RA desenha a 30 quadros/s; o jsQR espaça as análises para até 250 ms quando cada leitura custa caro | `public/ra.js`, `public/qr-tracker.js` | A pose muda até 10×/s; a resolução analisada e o alcance do reconhecimento não mudam |
+| O 3D do Início só é montado quando o Início fica visível, protegido por `Contencao`, com o fundo em CSS sempre por baixo | `src/App.tsx`, `src/style.css` | Link direto para Álbum/Perfil/Explorar baixava ~620 KB de 3D coberto. **Sem WebGL, o Início inteiro quebrava** (verificado no build anterior) |
+| Modo econômico no Início: com `saveData` ou até 2 GB de memória informados pelo navegador, usa só o fundo em CSS | `src/App.tsx` | Só o fundo decorativo muda; conteúdo e navegação são iguais |
+| RA sem WebGL: mensagem clara, botão desabilitado e link para o Grimório | `public/ra.js` | Antes: "Error creating WebGL context" com "Tentar novamente", que nunca funcionaria |
+| Laço da Casa a 30 quadros/s em telas de toque ou econômicas | `public/casa/js/corredor.js` | Inofensivo, mas **sem ganho medido** na emulação, que ficou saturada em 4–5 quadros/s |
+
+Avaliado e **descartado**: converter as texturas da casa para WebP economizaria só ~20% (1.157 → 911 KB) e exigiria arquivos duplicados e detecção de formato.
+
+### Antes × depois
+Chromium headless, 390×844, toque, DPR 2, **CPU 4× mais lenta**, GPU por software, sem limite de rede, build de produção, API simulada no navegador. Mediana de 2 amostras; tamanhos **sem compressão**. Arquivos: `tests/artifacts/mobile/final-*.json`.
+
+| Tela | Transferido | JS | Imagens | Repouso (ms/s) | Heap JS |
+|---|---|---|---|---|---|
+| Início | 1.129 → 1.131 KB | 971 → 972 | — | 132 → 129 | 9,3 → 9,6 MB |
+| Álbum (link direto) | 1.236 → **581 KB** | 1.060 → **442** | — | 122 → **12** | 8,9 → **2,8 MB** |
+| Galeria | 2.832 → **1.235 KB** | 21 → 23 | 2.637 → **1.038** | 0 → 0 | 0,9 → 0,9 MB |
+| RA, antes da câmera | 2.129 → **1.543 KB** | 1.687 → **1.101** | — | 6 → 5 | 3,4 → 3,4 MB |
+| Casa | 1.730 → 1.732 KB | 207 → 209 | 1.219 → 1.219 | ~155 → ~164 (3 amostras alternadas; sem diferença) | 5,4 → 5,2 MB |
+
+### Testes desta rodada
+| Teste | Resultado |
+|---|---|
+| Node `tests/*.test.mjs` (91) | APROVADO. `images.test.mjs` passou a aceitar o próprio original no `srcSet` e a exigi-lo |
+| `tsc` + build | APROVADO |
+| Backend pytest SQLite (53) | APROVADO |
+| PostgreSQL isolado (51) e suítes com backend | **BLOQUEADO**: Docker inativo; nenhum banco criado ou alterado |
+| `tests/ra-fluxo-sem-backend.mjs`: câmera só após o toque, reconhecimento, perda e reencontro do QR, um único POST, carta revelada, Flip, câmera liberada ao sair | APROVADO 8/8 no Chromium e no WebKit |
+| `tests/inicio-compatibilidade.mjs`: Álbum por link direto, 3D após fechar, sem WebGL (Início e RA) | APROVADO 4/4; o build anterior reprova 2 |
+| Gestos reais no limiar (36) | APROVADO |
+| Atalhos e easter eggs (18), WebKit | APROVADO |
+| Celular físico, Firefox | NÃO EXECUTADO |
+
+Cadastro, login, logout, separação de coleções e recompensa diária repetida dependem do PostgreSQL de testes e continuam cobertos apenas pelos testes SQLite (53 aprovados).
+
+### Divergências entre documentos e código
+- **MindAR (XRD/Plano) × jsQR (código):** mantido o jsQR. Ele roda sem arquivo `.mind`, reconhece o QR 02 e estima a pose. Limitações: precisa do QR inteiro, nítido e iluminado, e perde o alvo com inclinação forte. Não há decisão registrada que exija migrar.
+- **"Desafio cultural" (XRD §9.8, One Page):** cancelado (`DECISAO-ESCOPO-SEM-QUIZZES.md`).
+- **10 cartas (Plano/XRD) × 60 lendas:** mantido o catálogo de 60, conforme instrução.
+- **Sessão de 5–15 min:** é a duração da apresentação, não uma permanência mínima; nada no código a exige.
+- **Gatilho da Loira** (§9.2): continua pendente de decisão.
+
+### Limites reais
+- Requisitos: navegador atual; HTTPS e câmera para a RA; WebGL para o baú e para o 3D do Início.
+- A Casa ficou em 4–5 quadros/s na emulação (CPU 4× e GPU por software). Isso não prova desempenho em aparelho real, mas indica risco. A meta de ~30 quadros/s **não foi validada**.
+- `public/lendas/` ainda guarda WebP antigos (Loira e Kuldhara) que nenhuma tela carrega; foram mantidos.
+
+## 25. Transição Início → casa
+Antes, rolar no Início trocava de página sem transição. Agora:
+- **Saída (0,7 s):** o texto do limiar sobe 14 px e some, e um véu escuro com centro avermelhado cobre a tela. Enquanto isso, o navegador já pré-carrega o HTML, o CSS e o `main.js` da casa (`src/App.tsx`, `src/style.css`).
+- **Chegada:** quando o visitante vem do Início, a casa abre sob o mesmo véu, que se dissolve em 1,1 s sobre o jardim. Um script mínimo no `<head>` liga a classe `chegando` antes da primeira pintura, então não há piscada (`public/casa/index.html`, `public/casa/css/estilo.css`).
+- **Custo:** só `opacity` e `transform`, sem desfoque nem JavaScript por quadro. O efeito antigo `cena-cruzando` (2,4 s, com `filter: blur`) não é usado.
+- **Movimento reduzido:** troca imediata, sem véu de saída, e véu de chegada instantâneo. **Acesso direto à casa:** sem véu. **Voltar pelo navegador:** o Início reaparece aberto (`pageshow`).
+- **Teste:** `tests/transicao-casa-browser.mjs` passou em 4/4 casos. A saída mediu 693–700 ms dentro da página. Quadros em `tests/artifacts/transicao/sequencia.png`.
+
+## 26. Decisão: Loira do Banheiro só quando pedida (25/11/2026)
+Resolve a divergência do §9.2 e a pendência do §22.1, por decisão do responsável.
+- **Manifestação do espelho** (`public/casa/js/manifestacoes.js`): marcada como `somenteDemonstracao`. Na exploração normal ela não dispara mais; continua na sequência do modo de demonstração (`?apresentacao=1&demonstracao=1`). O diretor (gatilhos, silêncio de 8 s, uma por vez) não mudou.
+- **Easter egg** "loira" ×3 (rosto no espelho): mantido.
+- **Silhueta na janela do jardim:** mantida, por decisão do responsável.
+- **Peter Stumpp, Hachishakusama, Boitatá e Saci:** sem alteração.
+
+Verificação:
+- `tests/manifestacoes-casa.test.mjs` (10 testes, 1 novo): só a Loira é exclusiva da demonstração.
+- `tests/manifestacoes-entrada-browser.mjs`: na entrada normal, nenhuma manifestação em 14 s, tanto entrando direto quanto atravessando o jardim. Antes, a Loira aparecia em 1,2–1,5 s. No modo de demonstração, a Loira aparece em 1,4 s. Visitando o registro de cada uma, as outras quatro aparecem no modo normal.
+- `tests/atalhos-easter-eggs-browser.mjs`: o teste da tecla 6 passou a contar inclusões, não o total, porque efeitos automáticos antigos podiam sumir na mesma janela de medição. Uma falha isolada do Saci (o clique pegou uma porta abrindo) não se repetiu em 3 novas execuções.

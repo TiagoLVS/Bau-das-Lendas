@@ -101,3 +101,9 @@ test('modo normal ignora a sequência de demonstração', () => {
   rodar(demo, 60, { ...base, indice: 40 })
   assert.ok(logDemo.filter(([t]) => t === 'inicio').length >= 2)
 })
+
+test('Loira do Banheiro só na demonstração; as outras quatro seguem automáticas na exploração', () => {
+  const normal = MANIFESTACOES.filter(e => !e.somenteDemonstracao).map(e => e.id)
+  assert.deepEqual(MANIFESTACOES.filter(e => e.somenteDemonstracao).map(e => e.id), ['espelho'])
+  assert.deepEqual(normal.sort(), ['alta', 'boitata', 'lobo', 'saci'])
+})

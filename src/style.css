@@ -796,3 +796,15 @@ html[data-reduzir='true'] *::after {
 .conta-texto section[aria-label="Recompensas diárias"] summary::before { content: '▸'; margin-right: 10px; font-size: 13px; color: #c0857a; transition: transform .2s; }
 .conta-texto section[aria-label="Recompensas diárias"] details[open] > summary::before { transform: rotate(90deg); }
 .conta-texto section[aria-label="Recompensas diárias"] summary::-webkit-details-marker { display: none; }
+/* Com o canvas presente, o fundo de espera fica escondido e sem animar. */
+.world-layer:has(canvas) .world3d--carregando { visibility: hidden; animation: none; }
+
+/* Travessia para a casa: só opacidade e transform (leve em celulares). O véu tem o
+   mesmo tom do véu de chegada da casa, para a troca de página não aparecer. */
+.saindo .travessia-veu {
+  z-index: 100; opacity: 1; animation: none;
+  background: radial-gradient(ellipse at 50% 58%, #1c0f12, #050506 72%);
+  transition: opacity .7s cubic-bezier(.4, 0, .2, 1);
+}
+.saindo .limiar { opacity: 0; transform: translateY(-14px) scale(1.02); filter: none;
+  transition: opacity .45s ease, transform .7s ease; pointer-events: none; }

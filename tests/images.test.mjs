@@ -26,9 +26,13 @@ test('artes inteiras mantêm IDs, correspondências e hashes das fontes locais',
     assert.equal(art.crop, null)
     assert.equal(createHash('sha256').update(await readFile(art.source)).digest('hex'), art.sourceSha256)
     await access(`public${art.src}`)
-    for (const variant of art.srcSet ? art.srcSet.split(', ') : []) {
+    // Variantes reduzidas ficam em /lendas/<id>-*; a única outra entrada aceita é o
+    // próprio original, mantido como maior opção para a carta ampliada.
+    const entradas = art.srcSet ? art.srcSet.split(', ') : []
+    if (entradas.length) assert.ok(entradas.some(v => v.split(' ')[0] === art.src), 'srcSet deve incluir o original')
+    for (const variant of entradas) {
       const [path, width] = variant.split(' ')
-      assert.ok(path.startsWith(`/lendas/${art.id}-`))
+      assert.ok(path === art.src || path.startsWith(`/lendas/${art.id}-`))
       assert.ok(Number.parseInt(width) > 0)
       await access(`public${path}`)
     }
